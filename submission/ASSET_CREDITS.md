@@ -6,7 +6,10 @@ Unity Asset Store 에셋은 완성된 게임에 내장할 수 있지만 원본�
 
 | 상태 | 이름 | 종류 | 제작자·출처 | 라이선스 | 로컬 경로 | 수정 | 비고 |
 |---|---|---|---|---|---|---|---|
-| 후보 없음 | — | — | — | — | — | — | 에셋 선정 후 추가 |
+| 도입 | Mouse | 3D 마우스 | 상품 링크·제작자 확인 필요 | Unity Asset Store 이용 조건 확인 필요 | `Game/Assets/ThirdParty/Mouse.prefab` | 없음 | 원본 의존성: `ThirdParty/Source/JustPlay` |
+| 도입 | Keyboard | 3D 키보드 | 상품 링크·제작자 확인 필요 | Unity Asset Store 이용 조건 확인 필요 | `Game/Assets/ThirdParty/Keyboard.prefab` | 없음 | 원본 의존성: `ThirdParty/Source/KeyboardAdjustableColors` |
+| 도입 | Headset Type1 | 3D 헤드셋 | 상품 링크·제작자 확인 필요 | Unity Asset Store 이용 조건 확인 필요 | `Game/Assets/ThirdParty/Headset Type1.prefab` | 없음 | 원본 의존성: `ThirdParty/Source/Make Your Gadget assets` |
+| 도입 | Desk Table White | 3D 책상 | 상품 링크·제작자 확인 필요 | Unity Asset Store 이용 조건 확인 필요 | `Game/Assets/ThirdParty/Desk Table White.prefab` | 없음 | 원본 의존성: `ThirdParty/Source/Models` |
 
 ## AI 생성 이미지
 
