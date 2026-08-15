@@ -73,7 +73,7 @@
 - Produces: `CleaningTool { AirGun, CottonSwab, Cloth }`.
 - Produces: `ToolSelectionModel.Selected`, `Select(CleaningTool)`, and `SelectionChanged`.
 
-- [ ] **Step 1: Write the failing selection tests**
+- [x] **Step 1: Write the failing selection tests**
 
 ```csharp
 [Test]
@@ -114,7 +114,7 @@ Use these assembly definitions:
 }
 ```
 
-- [ ] **Step 2: Run the EditMode test and confirm it fails because the runtime types do not exist**
+- [x] **Step 2: Run the EditMode test and confirm it fails because the runtime types do not exist**
 
 Run:
 
@@ -124,7 +124,7 @@ Run:
 
 Expected: non-zero exit or failed test compilation naming `ToolSelectionModel`.
 
-- [ ] **Step 3: Implement the minimal model**
+- [x] **Step 3: Implement the minimal model**
 
 ```csharp
 public enum CleaningTool { AirGun, CottonSwab, Cloth }
@@ -143,11 +143,11 @@ public sealed class ToolSelectionModel
 }
 ```
 
-- [ ] **Step 4: Run all EditMode tests and inspect the Unity console through MCP**
+- [x] **Step 4: Run all EditMode tests and inspect the Unity console through MCP**
 
 Expected: tests pass; no new compilation errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add Game/Assets/CleanToContinue

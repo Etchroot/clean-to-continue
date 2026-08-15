@@ -1,0 +1,12 @@
+{
+  "name": "CleanToContinue.EditModeTests",
+  "references": [
+    "CleanToContinue.Runtime"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ]
+}

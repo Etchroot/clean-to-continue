@@ -1,0 +1,11 @@
+{
+  "name": "CleanToContinue.Editor",
+  "references": [
+    "CleanToContinue.Runtime",
+    "UnityEditor.TestRunner"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": true
+}
