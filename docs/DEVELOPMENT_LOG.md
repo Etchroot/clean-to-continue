@@ -333,3 +333,29 @@
 **다음 작업**
 
 - `03.Mouse`에서 최소 입력 루프를 먼저 연결한다: 좌클릭 청소, 우클릭 회전, `Space` 강조, 숫자키 도구 전환.
+
+## 2026-08-16 — 입력 라우팅과 장비 회전 구현
+
+**Codex 작업**
+
+- 코드로 만든 Input System 액션에 포인터 위치, 좌·우 버튼, `Space`, 숫자키 `1`·`2`·`3`의 Web 호환 바인딩을 추가했다.
+- `StageInteractionController`가 8번 `Cleanable` 레이어만 Raycast하고, 선택된 도구에 맞게 먼지·광택·틈새 오염으로만 청소 입력을 보낸다.
+- 우클릭 드래그를 회전에 우선 배정해 같은 프레임의 청소를 막고, `EquipmentRotator`의 세로 회전은 설정 범위 밖으로 나가지 않도록 제한했다.
+- UI 위에서 시작한 누름은 해제 전까지 계속 차단하고, 창 포커스가 사라질 때 향후 오디오 협력 컴포넌트에 정지 신호를 보내도록 했다.
+
+**TDD와 디버깅 기록**
+
+- RED: 새 EditMode·PlayMode 테스트를 추가한 뒤 `CleanToContinue.Input`, `EquipmentRotator`, `StageInteractionController`가 없다는 컴파일 오류 5건을 Unity 콘솔에서 확인했다.
+- 첫 PlayMode 실행은 5개 실패였다. 원인은 빈 `GapDirtGroup`이 기존 계약에 따라 진행도 100%를 반환하고 면봉 전용 픽스처에 표면 레이어가 없었던 테스트 준비 오류였다.
+- 세 종류의 실제 오염을 한 픽스처에 두되 광선이 닿지 않는 위치로 분리해, 도구별 “다른 오염 불변” 조건을 유효하게 검증하도록 수정했다.
+
+**검증 결과**
+
+- 열린 Unity Editor의 EditMode 테스트: 통과 21개, 실패 0개, 건너뜀 0개 (`TestResults/editmode-latest.json`).
+- 열린 Unity Editor의 PlayMode 테스트: 통과 10개, 실패 0개, 건너뜀 0개 (`TestResults/playmode-latest.json`).
+- 새 PlayMode 다섯 테스트는 에어건→먼지, 헝겊→광택, 면봉→틈새, 우클릭 회전 우선, UI 시작 클릭 차단·해제 후 재입력을 검사한다.
+- 최종 Unity 콘솔에는 게임 코드 오류가 없었다. Unity AI Assistant 계정 API 접근 지연 경고 1건은 기존 패키지의 네트워크 경고로 분리했다.
+
+**다음 작업**
+
+- `03.Mouse` 조립 단계에서 이 입력 컴포넌트를 실제 StageRoot·UI·오디오와 연결하고, 물리 마우스/브라우저 입력을 포함한 장면 검증을 수행한다.

@@ -91,6 +91,16 @@
 - **관련 파일:** `Runtime/Gap/GapDirtSpot.cs`, `GapDirtGroup.cs`, `Runtime/Highlight/HighlightController.cs`, `Runtime/Surface/SurfaceMaskLayer.cs`
 - **확인 방법:** EditMode 테스트 4개가 면봉 전용 진행도와 누락 참조를 검사하고 PlayMode 테스트가 진행도 0%와 완료된 지점이 섞인 상태의 강조를 검사한다.
 
+### 입력 연결과 장비 회전
+
+- **하는 일:** `StageInputController`가 Unity의 공식 Input System으로 마우스 위치·좌클릭·우클릭·`Space`·숫자키 `1`/`2`/`3`을 읽는다. `StageInteractionController`는 좌클릭을 현재 도구에 맞는 오염에만 보내고, 우클릭은 장비 회전에만 보낸다.
+- **사용자에게 보이는 결과:** 에어건은 먼지, 헝겊은 광택, 면봉은 틈새 오염에만 반응한다. 우클릭 드래그 중에는 청소가 함께 일어나지 않는다. UI에서 누르기 시작한 클릭은 버튼을 놓을 때까지 장비 뒤쪽을 청소하거나 회전하지 않는다.
+- **회전 범위:** `EquipmentRotator`는 기본적으로 위아래 회전값을 `-35`~`55`도 범위에 고정한다. 게임 제작자는 Inspector의 `Min Pitch`, `Max Pitch`, `Sensitivity`로 장비마다 감도와 시야를 조정할 수 있다.
+- **청소 대상 구분:** Unity의 8번 레이어 이름은 `Cleanable`이다. 입력 광선은 이 레이어만 검사하므로 책상과 장식물은 클릭해도 청소되지 않는다.
+- **포커스 보호:** 브라우저 탭이나 Unity 창이 포커스를 잃으면, 나중에 연결될 도구 루프 사운드에 정지 신호를 보낸다.
+- **관련 파일:** `Runtime/Input/StageInputController.cs`, `StageInteractionController.cs`, `EquipmentRotator.cs`, `Tests/EditMode/EquipmentRotatorTests.cs`, `Tests/PlayMode/StageInteractionControllerTests.cs`, `Game/ProjectSettings/TagManager.asset`
+- **확인 방법:** Unity의 열린 Editor에서 EditMode 21개와 PlayMode 10개 테스트를 실행한다. 새 PlayMode 테스트 다섯 개는 도구별 Raycast 라우팅, 우클릭 회전 우선, UI 시작 클릭의 해제 전 차단을 실제 Camera·Collider·오염 컴포넌트로 검사한다.
+
 ### 번호형 여섯 씬 골격
 
 - **하는 일:** 최종 게임 흐름에 필요한 여섯 씬을 `Assets/CleanToContinue/Scenes`에 미리 만들고 Build Settings에 01~06 순서로 등록한다.
