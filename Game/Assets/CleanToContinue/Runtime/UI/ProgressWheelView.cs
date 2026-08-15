@@ -29,7 +29,7 @@ namespace CleanToContinue.UI
 
             if (percentText != null)
             {
-                percentText.text = $"{Mathf.RoundToInt(DisplayedProgress01 * 100f)}%";
+                percentText.text = $"{Mathf.FloorToInt(DisplayedProgress01 * 100f)}%";
             }
         }
     }

@@ -50,13 +50,19 @@ namespace CleanToContinue.Stage
             ToolSelectionModel selection,
             StageProgressModel progress,
             IProgressSource[] sources,
-            MemoryPanelView memory)
+            MemoryPanelView memory,
+            ProgressWheelView wheel = null,
+            ToolSelectorView selector = null,
+            CleaningAudioController audio = null)
         {
             Unsubscribe();
             selectionModel = selection;
             progressModel = progress;
             progressSources = sources ?? Array.Empty<IProgressSource>();
             memoryPanel = memory;
+            progressWheel = wheel;
+            toolSelector = selector;
+            cleaningAudio = audio;
             initialized = false;
         }
 
@@ -146,9 +152,14 @@ namespace CleanToContinue.Stage
             }
 
             cleaningAudio?.StopContinuousToolAudio();
+            toolSelector?.SetInteractable(false);
             if (progressWheel != null)
             {
-                completionWheelRoutine = StartCoroutine(AnimateWheelToComplete());
+                var crossedProgress = progressModel != null
+                    ? progressModel.Progress01
+                    : progressWheel.DisplayedProgress01;
+                progressWheel.Render(crossedProgress);
+                completionWheelRoutine = StartCoroutine(AnimateWheelToComplete(crossedProgress));
             }
 
             ForceFinishAllLayers();
@@ -186,7 +197,12 @@ namespace CleanToContinue.Stage
 
         private void HandleCleanHeldChanged(bool held)
         {
-            cleaningHeld = held && !InputLocked;
+            UpdateCleaningAudio(held, inputController != null && inputController.PointerOverUi);
+        }
+
+        public void UpdateCleaningAudio(bool held, bool pointerOverUi)
+        {
+            cleaningHeld = held && !pointerOverUi && !InputLocked;
             if (cleaningHeld)
             {
                 cleaningAudio?.BeginCleaning(selectionModel.Selected);
@@ -219,10 +235,10 @@ namespace CleanToContinue.Stage
             }
         }
 
-        private IEnumerator AnimateWheelToComplete()
+        private IEnumerator AnimateWheelToComplete(float start)
         {
-            var start = progressWheel.DisplayedProgress01;
             var elapsed = 0f;
+            yield return null;
             while (elapsed < CompletionWheelSeconds)
             {
                 elapsed += Time.unscaledDeltaTime;

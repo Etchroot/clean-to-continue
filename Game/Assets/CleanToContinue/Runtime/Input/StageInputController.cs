@@ -30,6 +30,7 @@ namespace CleanToContinue.Input
         private bool hasPreviousPointerPosition;
 
         public Vector2 PointerPosition { get; private set; }
+        public bool PointerOverUi { get; private set; }
         public bool IsCleanHeld { get; private set; }
         public bool IsRotateHeld { get; private set; }
         public ToolSelectionModel ToolSelection => toolSelection;
@@ -77,15 +78,15 @@ namespace CleanToContinue.Input
             hasPreviousPointerPosition = true;
             PointerPositionChanged?.Invoke(PointerPosition);
 
+            PointerOverUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
             SetCleanHeld(cleanAction.IsPressed());
             SetRotateHeld(rotateAction.IsPressed());
-            var pointerOverUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
             interactionController?.ProcessFrame(
                 PointerPosition,
                 pointerDelta,
                 IsCleanHeld,
                 IsRotateHeld,
-                pointerOverUi);
+                PointerOverUi);
         }
 
         private void OnDisable()

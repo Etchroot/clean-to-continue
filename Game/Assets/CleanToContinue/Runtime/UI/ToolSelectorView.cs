@@ -32,6 +32,8 @@ namespace CleanToContinue.UI
         private ToolSelectionModel selectionModel;
         private IProgressSource[] progressSources = Array.Empty<IProgressSource>();
 
+        public bool Interactable { get; private set; } = true;
+
         public void Configure(
             ToolSelectionModel selection,
             IProgressSource[] sources,
@@ -63,6 +65,18 @@ namespace CleanToContinue.UI
             BindButtons();
             RenderSelection(selectionModel.Selected);
             RenderAllProgress();
+        }
+
+        public void SetInteractable(bool interactable)
+        {
+            Interactable = interactable;
+            foreach (var binding in buttons)
+            {
+                if (binding?.Button != null)
+                {
+                    binding.Button.interactable = interactable;
+                }
+            }
         }
 
         public void RenderSelection(CleaningTool selectedTool)
@@ -144,6 +158,11 @@ namespace CleanToContinue.UI
 
         private void SelectFromUi(CleaningTool tool)
         {
+            if (!Interactable)
+            {
+                return;
+            }
+
             cleaningAudio?.NotifyUserInteraction();
             cleaningAudio?.StopContinuousToolAudio();
             selectionModel?.Select(tool);
