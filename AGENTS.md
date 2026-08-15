@@ -1,0 +1,43 @@
+# Clean to Continue 작업 지침
+
+이 저장소에서 작업하는 모든 Codex 세션은 변경 전에 아래 문서를 순서대로 읽는다.
+
+1. `README.md`
+2. `docs/GAME_DESIGN.md`
+3. `docs/DEVELOPMENT_ROADMAP.md`
+4. `docs/CODEX_UNITY_WORKFLOW.md`
+5. `docs/HUMAN_IN_THE_LOOP.md`
+6. `docs/DEVELOPMENT_LOG.md`
+
+## 프로젝트 원칙
+
+- 최종 결과물은 설치 없이 브라우저에서 실행되는 Unity Web 빌드여야 한다.
+- 핵심 재미는 오염이 사라지고 장비가 깨끗해지는 시각·청각적 만족감이다.
+- 마우스 세로 슬라이스를 먼저 완성하고 검증한 뒤 키보드와 헤드셋으로 확장한다.
+- 비전공자인 프로젝트 소유자가 이해할 수 있도록 코드와 구조 변경을 쉬운 한국어로 설명한다.
+- 요청 범위 밖의 기능, 넓은 3D 공간, 캐릭터 이동, 복잡한 액체 물리를 임의로 추가하지 않는다.
+- 사용자 파일과 기존 변경을 보존하며, 관련 없는 리팩터링이나 삭제를 하지 않는다.
+
+## 기록 의무
+
+- 의미 있는 작업이 끝나면 `docs/DEVELOPMENT_LOG.md`에 목표, 변경 파일, 검증 결과와 다음 작업을 기록한다.
+- 사용자가 아이디어를 제안하거나 수정·선택·거절한 경우 `docs/HUMAN_IN_THE_LOOP.md`에 새 `HIL-###` 항목을 추가한다.
+- Codex의 제안과 사용자의 최종 결정을 바꾸어 기록하지 않는다.
+- 구현 구조나 수정 위치가 달라지면 `docs/NONTECHNICAL_GUIDE.md`를 함께 갱신한다.
+- 제출 설명에 사용할 만한 Codex 작업은 `submission/CODEX_COLLABORATION.md`에 근거 파일과 함께 반영한다.
+
+## Unity와 검증
+
+- Unity 프로젝트 루트는 `Game/`이다.
+- Unity 6.3 LTS, Universal Render Pipeline, Web 플랫폼을 기본으로 한다.
+- 기능 변경은 가능한 경우 EditMode 테스트, PlayMode 테스트, Unity 콘솔 확인 순서로 검증한다.
+- 주요 마일스톤마다 실제 Web 빌드를 만들고 Chrome과 Edge에서 입력, 오디오, 새로고침과 로딩을 확인한다.
+- MCP가 연결되어 있으면 씬·GameObject·컴포넌트·콘솔 상태를 확인하되, 중요한 변경은 사용자 의도와 문서에 맞는지 먼저 검토한다.
+- MCP가 연결되지 않으면 파일 편집과 Unity 배치 모드 검증 경로를 사용한다.
+
+## 에셋과 공개 저장소
+
+- Unity Asset Store 원본은 `Game/Assets/ThirdParty/`에 두고 Git에 커밋하지 않는다.
+- 제3자 모델, 텍스처, 음원, 폰트는 사용 전에 `submission/ASSET_CREDITS.md`에 출처와 라이선스를 기록한다.
+- API 키, 토큰, `.env`, 개인 정보와 Unity Cloud 인증 정보는 커밋하지 않는다.
+- AI 생성 이미지는 사용자의 검토와 승인 후 적용하고 생성 도구·날짜·용도를 기록한다.

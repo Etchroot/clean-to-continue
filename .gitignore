@@ -1,0 +1,52 @@
+# Unity project is nested under Game/
+Game/[Ll]ibrary/
+Game/[Tt]emp/
+Game/[Oo]bj/
+Game/[Bb]uild/
+Game/[Bb]uilds/
+Game/[Ll]ogs/
+Game/[Uu]ser[Ss]ettings/
+Game/MemoryCaptures/
+Game/Recordings/
+
+# Licensed third-party source assets must never be redistributed in this public repository.
+Game/Assets/ThirdParty/*
+!Game/Assets/ThirdParty/README.md
+Game/Assets/AssetStoreTools*
+
+# Unity generated IDE files
+Game/*.csproj
+Game/*.sln
+Game/*.slnx
+Game/*.unityproj
+Game/*.pidb
+Game/*.booproj
+Game/*.svd
+Game/*.pdb
+Game/*.mdb
+Game/*.opendb
+Game/*.VC.db
+
+# IDE and operating system
+.vs/
+.vscode/
+.idea/
+*.user
+*.userprefs
+*.suo
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local worktrees and reports
+.worktrees/
+TestResults/
+Coverage/
