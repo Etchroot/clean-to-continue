@@ -70,4 +70,15 @@
 - **관련 파일:** `Runtime/Surface/CoverageGrid.cs`, `Runtime/Progress/IProgressSource.cs`, `Runtime/Progress/StageProgressModel.cs`
 - **확인 방법:** `CoverageGridTests.cs`와 `StageProgressModelTests.cs`가 반복 청소, 범위 밖 UV, 동일 가중치, 89.9%, 정확한 90%와 완료 1회 조건을 검사한다.
 
+### 먼지 제거와 광택 복원 마스크
+
+- **하는 일:** 클릭한 3D 표면의 UV 좌표에 둥근 브러시 자국을 남긴다. 먼지와 “아직 광택이 복원되지 않은 부분”을 서로 다른 흑백 마스크에 보관한다.
+- **왜 텍스처가 두 장씩 필요한가:** GPU는 같은 텍스처를 동시에 안전하게 읽고 쓸 수 없으므로 현재 마스크를 읽어 다른 마스크에 결과를 쓴 다음 두 역할을 바꾼다. 이를 더블 버퍼라고 한다.
+- **사용자에게 보이는 결과:** 에어건이 지나가면 회색 먼지가 사라지고, 헝겊이 지나가면 그 자리의 Smoothness가 높아져 Unity 조명과 반사가 선명해진다. 별도의 얼룩 그림은 나타나지 않는다.
+- **성능 구조:** 화면 변화는 기본 512×512 GPU 마스크로 부드럽게 표현하고, 진행도는 64×64 CPU 격자로 계산한다. 전체 텍스처 픽셀을 C#에서 매번 수정하지 않아 Web 빌드의 CPU 정지를 줄인다.
+- **원본 에셋 보호:** Asset Store의 원본 Material을 직접 바꾸지 않고 `CleanToContinue/Cleanable Surface` 셰이더를 쓰는 별도 Material을 장비 조립 단계에서 만든다.
+- **웹 빌드 보호:** 스탬프 셰이더는 코드에서만 이름으로 찾기 때문에 Unity가 “미사용 파일”로 오해하지 않도록 Player 빌드의 항상 포함할 셰이더 목록에 등록했다.
+- **관련 파일:** `RuntimeMaskPainter.cs`, `SurfaceMaskLayer.cs`, `Shaders/MaskStamp.shader`, `Shaders/CleanableSurface.shader`
+- **확인 방법:** EditMode 테스트는 GPU 스탬프, 임시 텍스처 해제와 Player 빌드 포함을 검사하고, PlayMode 테스트는 실제 MeshCollider UV에서 잘못된 도구 차단·반복 입력·강제 완료·두 마스크의 공존을 검사한다.
+
 다음 구현에서 장비 회전, 오염, 진행도, 원형 UI, 완료 이미지와 Web 빌드 항목을 같은 형식으로 추가한다.

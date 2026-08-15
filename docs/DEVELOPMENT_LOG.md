@@ -221,3 +221,40 @@
 **다음 작업**
 
 - GPU 마스크에 원형 브러시를 기록하고 먼지 제거와 광택 복원 레이어에 연결한다.
+
+## 2026-08-16 — GPU 먼지·광택 표면 마스크 구현
+
+**사용자 승인**
+
+- CPU 진행 격자와 GPU 시각 마스크를 결합하고 더블 버퍼 방식으로 Web 호환성을 확보하는 설계를 승인했다.
+
+**Codex 작업**
+
+- Compute Shader 없이 두 RenderTexture를 번갈아 사용하는 `RuntimeMaskPainter`와 원형 스탬프 셰이더를 구현했다.
+- 한 Renderer에서 먼지와 광택 레이어가 각자의 MaterialPropertyBlock 속성만 수정하도록 `SurfaceMaskLayer`를 구현했다.
+- 먼지는 색 혼합으로 제거하고 헝겊 청소는 Smoothness와 실제 URP 조명 반응을 복원하는 `CleanableSurface` 셰이더를 추가했다.
+- 기존 Editor 테스트 명령을 EditMode와 PlayMode 양쪽에서 결과 JSON을 남기도록 확장했다.
+- 런타임 문자열로 찾는 숨김 스탬프 셰이더가 Web 빌드에서 제거되지 않도록 `Always Included Shaders`에 등록했다.
+
+**TDD와 디버깅 기록**
+
+- RED: `RuntimeMaskPainter`와 `SurfaceMaskLayer`가 없다는 EditMode·PlayMode 테스트 컴파일 실패를 확인했다.
+- GPU 마스크 수명주기 테스트가 파괴된 Unity 객체에 다시 접근하는 잘못된 가정으로 실패해, 생성 객체 수가 2개 증가했다가 Dispose 후 원복되는 실제 누수 검사로 수정했다.
+- 첫 PlayMode 실행에서 MonoBehaviour 필드 초기화 중 `MaterialPropertyBlock` 네이티브 객체를 생성한 오류를 재현하고, 첫 사용 시 지연 생성하도록 수명주기를 수정했다.
+
+**검증 결과**
+
+- EditMode: 통과 11개, 실패 0개. 숨김 스탬프 셰이더의 Player 빌드 포함 여부도 검사한다.
+- PlayMode: 통과 4개, 실패 0개. 동일 Renderer의 먼지·광택 마스크와 기존 속성 보존도 검사한다.
+- 임시 URP 장면에서 셰이더 지원 상태와 지역적인 먼지 제거를 다각도 캡처로 확인한 뒤 임시 오브젝트를 제거했다.
+- 최종 MCP 콘솔은 오류 0건, 경고 0건이었다.
+
+**구현 메모**
+
+- 계획의 Shader Graph 수식은 버전 관리와 자동 생성 안정성을 위해 같은 URP PBR 수식을 가진 ShaderLab 파일로 구현했다.
+- 기본 마스크 해상도는 시각용 512×512, 진행도용 64×64이며 장비별 설정에서 조정할 수 있다.
+- Unity의 강제 에셋 새로고침 과정에서 `ProjectSettings.asset`이 현재 Unity 6000.3 직렬화 형식으로 자동 갱신됐으며, 표면 마스크와 무관한 수동 플랫폼 설정 변경은 하지 않았다.
+
+**다음 작업**
+
+- 면봉으로 제거할 틈새 오염 지점과 `Space` 잔여 오염 강조를 구현한다.

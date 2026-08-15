@@ -8,12 +8,12 @@ namespace CleanToContinue.Editor
     [InitializeOnLoad]
     public static class EditModeTestCommand
     {
-        public const string MenuPath = "Tools/Clean to Continue/Run EditMode Tests";
+        public const string EditModeMenuPath = "Tools/Clean to Continue/Run EditMode Tests";
+        public const string PlayModeMenuPath = "Tools/Clean to Continue/Run PlayMode Tests";
 
-        private static readonly string ResultPath = Path.GetFullPath(
-            Path.Combine(Application.dataPath, "..", "..", "TestResults", "editmode-latest.json"));
+        private const string ActiveResultPathKey = "CleanToContinue.ActiveTestResultPath";
 
-        private static readonly ResultCallbacks Callbacks = new ResultCallbacks(ResultPath);
+        private static readonly ResultCallbacks Callbacks = new ResultCallbacks();
         private static TestRunnerApi runner;
 
         static EditModeTestCommand()
@@ -21,29 +21,47 @@ namespace CleanToContinue.Editor
             RegisterCallbacks();
         }
 
-        [MenuItem(MenuPath)]
-        public static void RunAll()
+        [MenuItem(EditModeMenuPath)]
+        public static void RunEditMode()
+        {
+            Run(TestMode.EditMode, "CleanToContinue.EditModeTests", "editmode-latest.json");
+        }
+
+        [MenuItem(PlayModeMenuPath)]
+        public static void RunPlayMode()
+        {
+            Run(TestMode.PlayMode, "CleanToContinue.PlayModeTests", "playmode-latest.json");
+        }
+
+        private static void Run(TestMode mode, string assemblyName, string resultFileName)
         {
             RegisterCallbacks();
+            var resultPath = Path.GetFullPath(Path.Combine(
+                Application.dataPath,
+                "..",
+                "..",
+                "TestResults",
+                resultFileName));
+            SessionState.SetString(ActiveResultPathKey, resultPath);
 
-            var directory = Path.GetDirectoryName(ResultPath);
+            var directory = Path.GetDirectoryName(resultPath);
             if (!string.IsNullOrEmpty(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
-            if (File.Exists(ResultPath))
+            if (File.Exists(resultPath))
             {
-                File.Delete(ResultPath);
+                File.Delete(resultPath);
             }
 
             runner.Execute(new ExecutionSettings(new Filter
             {
-                testMode = TestMode.EditMode,
-                assemblyNames = new[] { "CleanToContinue.EditModeTests" }
+                testMode = mode,
+                assemblyNames = new[] { assemblyName }
             }));
 
-            Debug.Log("[CTC_TEST] EditMode tests started.");
+            Debug.Log($"[CTC_TEST] {mode} tests started.");
         }
 
         private static void RegisterCallbacks()
@@ -60,13 +78,6 @@ namespace CleanToContinue.Editor
 
         private sealed class ResultCallbacks : ICallbacks
         {
-            private readonly string resultPath;
-
-            public ResultCallbacks(string resultPath)
-            {
-                this.resultPath = resultPath;
-            }
-
             public void RunStarted(ITestAdaptor testsToRun) { }
 
             public void RunFinished(ITestResultAdaptor result)
@@ -79,7 +90,11 @@ namespace CleanToContinue.Editor
                     skipped = result.SkipCount
                 };
 
-                File.WriteAllText(resultPath, JsonUtility.ToJson(report, true));
+                var resultPath = SessionState.GetString(ActiveResultPathKey, string.Empty);
+                if (!string.IsNullOrEmpty(resultPath))
+                {
+                    File.WriteAllText(resultPath, JsonUtility.ToJson(report, true));
+                }
                 Debug.Log($"[CTC_TEST] Finished: {report.passed} passed, {report.failed} failed, {report.skipped} skipped.");
             }
 

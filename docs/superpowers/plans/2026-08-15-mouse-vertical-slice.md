@@ -37,7 +37,7 @@
 | `Game/Assets/CleanToContinue/Runtime/Surface/RuntimeMaskPainter.cs` | Double-buffered Web-safe mask stamping. |
 | `Game/Assets/CleanToContinue/Runtime/Surface/SurfaceMaskLayer.cs` | Ray-hit UV cleaning for dust or polish. |
 | `Game/Assets/CleanToContinue/Shaders/MaskStamp.shader` | Writes a circular value into a mask without compute shaders. |
-| `Game/Assets/CleanToContinue/Shaders/CleanableSurface.shadergraph` | Dust color and per-pixel smoothness restoration. |
+| `Game/Assets/CleanToContinue/Shaders/CleanableSurface.shader` | Dust color and per-pixel smoothness restoration. |
 | `Game/Assets/CleanToContinue/Runtime/Gap/GapDirtSpot.cs` | One cotton-swab dirt target. |
 | `Game/Assets/CleanToContinue/Runtime/Gap/GapDirtGroup.cs` | Gap progress and target lookup. |
 | `Game/Assets/CleanToContinue/Runtime/Input/StageInputController.cs` | Input System actions and pointer/UI guards. |
@@ -264,7 +264,7 @@ git commit -m "feat: add cleaning progress rules"
 
 **Files:**
 - Create: `Game/Assets/CleanToContinue/Shaders/MaskStamp.shader`
-- Create: `Game/Assets/CleanToContinue/Shaders/CleanableSurface.shadergraph`
+- Create: `Game/Assets/CleanToContinue/Shaders/CleanableSurface.shader`
 - Create: `Game/Assets/CleanToContinue/Runtime/Surface/RuntimeMaskPainter.cs`
 - Create: `Game/Assets/CleanToContinue/Runtime/Surface/SurfaceMaskLayer.cs`
 - Create: `Game/Assets/CleanToContinue/Tests/EditMode/RuntimeMaskPainterTests.cs`
@@ -286,7 +286,7 @@ Create the PlayMode assembly before its first test:
 - Produces: `RuntimeMaskPainter.Initialize(int, Color)`, `Stamp(Vector2, float, float)`, `CurrentMask`, and `Dispose()`.
 - Produces: `SurfaceMaskLayer.TryClean(CleaningTool, RaycastHit, float)` and `ForceFinish()`.
 
-- [ ] **Step 1: Write failing mask lifecycle and tool-routing tests**
+- [x] **Step 1: Write failing mask lifecycle and tool-routing tests**
 
 ```csharp
 [UnityTest]
@@ -304,9 +304,9 @@ Implement `CreateTestSurface` and `CreateCenterHit` as private helpers in the sa
 
 Add an EditMode test that initializes a 32×32 painter, verifies `CurrentMask` exists, disposes it, and verifies both temporary render textures are released without throwing.
 
-- [ ] **Step 2: Run tests and confirm missing implementation failures**
+- [x] **Step 2: Run tests and confirm missing implementation failures**
 
-- [ ] **Step 3: Implement a Web-compatible double-buffer mask stamp**
+- [x] **Step 3: Implement a Web-compatible double-buffer mask stamp**
 
 Use two `RenderTexture` instances with `RenderTextureFormat.ARGB32`, bilinear filtering, clamp wrapping, and no compute shader. `Stamp` sets `_BrushUV`, `_BrushRadius`, and `_WriteValue`, blits current → scratch through `MaskStamp.shader`, swaps the references, and updates the renderer property block.
 
@@ -320,7 +320,7 @@ float value = lerp(oldValue, _WriteValue, strength);
 return float4(value, value, value, 1.0);
 ```
 
-- [ ] **Step 4: Configure the URP Lit Shader Graph exactly**
+- [x] **Step 4: Configure the URP Lit surface shader exactly**
 
 Properties:
 
@@ -349,17 +349,17 @@ Emission = _HighlightColor * max(dustRemaining, 1 - polishClean) * _HighlightPul
 
 Use the Lit target so the restored smoothness reacts to the scene's real URP lights and reflections.
 
-- [ ] **Step 5: Implement `SurfaceMaskLayer`**
+- [x] **Step 5: Implement `SurfaceMaskLayer`**
 
 Create one instance for dust (`Tool = AirGun`, shader property `_DustMask`, stamp write value `0`) and one for polish remaining (`Tool = Cloth`, shader property `_PolishRemainingMask`, stamp write value `0`). Both start white, own a 64×64 `CoverageGrid`, use a 512×512 visual mask, and raise `ProgressChanged` only when a stroke cleans at least one new coverage cell. Store the property name as a serialized string so both layers can share one renderer and one material property block without overwriting each other.
 
 Before setting a texture or highlight value, call `renderer.GetPropertyBlock(block)`, change only the owned property, then call `renderer.SetPropertyBlock(block)`. This preserves the other layer's mask and avoids last-writer-wins material state.
 
-- [ ] **Step 6: Run EditMode and PlayMode tests, then inspect a captured Scene view**
+- [x] **Step 6: Run EditMode and PlayMode tests, then inspect a captured Scene view**
 
 Expected: the same stroke is idempotent, wrong tools do nothing, and cloth strokes produce localized highlights under the Directional Light.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```powershell
 git add Game/Assets/CleanToContinue
