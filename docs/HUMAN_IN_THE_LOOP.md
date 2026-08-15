@@ -15,6 +15,9 @@
 | HIL-009 | 2026-08-15 | GitHub `Etchroot` 계정에 공개 저장소를 만든다. | 에셋 원본 제외와 MIT License를 제안했다. | `clean-to-continue` Public 저장소, MIT License를 사용한다. | 검증 | `LICENSE`, `submission/ASSET_CREDITS.md` |
 | HIL-010 | 2026-08-15 | 최신 Unity 6.5 대신 어떤 Editor를 설치할지 확인했다. | Web 빌드와 MCP 안정성을 위해 Unity 6.3 LTS 최신 패치를 권장했다. | Unity 6000.3.22f1과 Web Build Support를 사용한다. | 검증 | `Game/ProjectSettings/ProjectVersion.txt`, `docs/DEVELOPMENT_LOG.md` |
 | HIL-011 | 2026-08-15 | Unity 설치와 MCP 설정 과정에서 화면의 설치·제거·Bridge·클라이언트 상태를 직접 확인했다. | Codex가 파일·프로세스·컴파일 로그를 검증하고 Unity 콘솔·씬·GameObject를 MCP로 읽었다. | Unity Bridge는 `Running`, Codex 클라이언트는 `Accepted`이며 별도 `Pending Connections` 승인이 필요 없는 연결 상태임을 확인했다. | 검증 | `docs/DEVELOPMENT_LOG.md`, `docs/CODEX_UNITY_WORKFLOW.md` |
+| HIL-012 | 2026-08-15 | 세 도구를 자유롭게 바꾸고 에어건·면봉·헝겊으로 고정하며 3D 도구는 표시하지 않는다. | 오염 마스크와 틈새 오브젝트를 함께 쓰는 하이브리드 구조, 아이콘 상태와 도구별 사운드를 제안했다. | 오른쪽 이미지 버튼으로 세 도구를 선택하고 시각 효과와 사운드로 사용 상태를 전달한다. | 기획 | `docs/GAME_DESIGN.md` |
+| HIL-013 | 2026-08-15 | 메인 메뉴, 오프닝과 엔딩이 필요하며 메뉴에는 시작·설정·크레딧 버튼을 둔다. | 장비별 독립 씬 3개와 공통 `StageRoot`, 설정·크레딧·추억 UI 패널을 제안했다. | `MainMenu`, `Opening`, 장비별 3개, `Ending`의 여섯 씬을 사용한다. | 기획 | `docs/GAME_DESIGN.md` |
+| HIL-014 | 2026-08-15 | 별도 얼룩 없이 헝겊 청소 후 광택을 복원하고, `Space`로 잔여 오염을 강조하며 90%에서 자동 완료한다. | 완전한 비조명보다 기본 확산광은 유지하고 마스크로 Smoothness와 반사를 복원하는 방식을 제안했다. | 헝겊은 광택 복원 도구이며 강조 기능은 진행도 제한 없이 사용하고 전체 90%를 완료 기준으로 삼는다. | 기획 | `docs/GAME_DESIGN.md`, `docs/NONTECHNICAL_GUIDE.md` |
 
 ## 새 항목 작성 규칙
 

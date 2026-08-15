@@ -32,6 +32,7 @@
 - Unity Hub 구버전 제거 충돌을 사용자와 함께 해결하고 Unity 6000.3.22f1, WebGL 모듈과 Visual Studio 설치를 검증했다.
 - Universal 3D 템플릿의 Input System 1.12.0 컴파일 문제를 공식 지원 버전 1.17.0으로 수정했다.
 - 공식 MCP를 연결해 Unity 콘솔의 오류·경고와 열린 씬의 `Main Camera`, `Directional Light` 및 컴포넌트를 직접 읽어 검증했다.
+- 사용자와 청소 표현 방식을 비교해 표면 마스크, 틈새 오브젝트와 Unity 조명 기반 광택 복원을 결합한 Web 친화적 구조로 구체화했다.
 
 ## 사람이 직접 결정한 부분은 무엇인가요?
 

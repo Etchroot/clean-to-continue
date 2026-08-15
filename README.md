@@ -18,6 +18,7 @@
 - `docs/DEVELOPMENT_ROADMAP.md`: 구현 순서와 완료 기준
 - `docs/CODEX_UNITY_WORKFLOW.md`: Codex와 Unity의 연동 방식
 - `docs/NONTECHNICAL_GUIDE.md`: 비전공자를 위한 구조 설명
+- `docs/ASSET_REQUIREMENTS.md`: 구매·준비할 에셋과 기술 조건
 - `docs/HUMAN_IN_THE_LOOP.md`: 사용자의 직접 결정 기록
 - `docs/DEVELOPMENT_LOG.md`: 날짜별 개발 기록
 - `submission/`: 신청서, 영상, Codex 활용과 검수 자료
