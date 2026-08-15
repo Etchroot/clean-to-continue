@@ -7,6 +7,8 @@ namespace CleanToContinue.Surface
 {
     public sealed class SurfaceMaskLayer : MonoBehaviour, IProgressSource
     {
+        private static readonly int HighlightPulseId = Shader.PropertyToID("_HighlightPulse");
+
         [SerializeField] private Renderer targetRenderer;
         [SerializeField] private CleaningTool tool = CleaningTool.AirGun;
         [SerializeField] private string maskProperty = "_DustMask";
@@ -79,6 +81,19 @@ namespace CleanToContinue.Surface
             painter.Stamp(new Vector2(0.5f, 0.5f), 1f, 0f);
             ApplyMaskToRenderer();
             ProgressChanged?.Invoke();
+        }
+
+        public void SetHighlight(float intensity)
+        {
+            if (targetRenderer == null)
+            {
+                return;
+            }
+
+            propertyBlock ??= new MaterialPropertyBlock();
+            targetRenderer.GetPropertyBlock(propertyBlock);
+            propertyBlock.SetFloat(HighlightPulseId, Mathf.Clamp01(intensity));
+            targetRenderer.SetPropertyBlock(propertyBlock);
         }
 
         private void Awake()

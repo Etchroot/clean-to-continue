@@ -383,7 +383,7 @@ git commit -m "feat: add surface dust and polish masks"
 - Produces: `GapDirtGroup.TryClean(CleaningTool, Collider, float)`, `Progress01`, and `ForceFinish()`.
 - Produces: `HighlightController.Pulse()` with a fixed 1.2-second duration.
 
-- [ ] **Step 1: Write failing gap progress tests**
+- [x] **Step 1: Write failing gap progress tests**
 
 ```csharp
 [Test]
@@ -398,25 +398,25 @@ public void CottonSwabReducesOnlyMatchingSpot()
 
 Define `CreateGroupWithTwoSpots` as a private helper in `GapDirtGroupTests.cs`; it creates a parent GameObject, two child spots with sphere colliders, assigns both to the group, and destroys the parent in teardown.
 
-- [ ] **Step 2: Write a failing highlight test**
+- [x] **Step 2: Write a failing highlight test**
 
 At progress 0%, call `Pulse()`, verify unfinished surface and gap targets receive a positive highlight value, advance 1.3 seconds, and verify the value returns to zero. Repeat after completing one spot and verify that spot is not highlighted.
 
-- [ ] **Step 3: Run tests and verify the new types are missing**
+- [x] **Step 3: Run tests and verify the new types are missing**
 
-- [ ] **Step 4: Implement gap dirt**
+- [x] **Step 4: Implement gap dirt**
 
 Each spot starts at `Remaining01 = 1`, subtracts `cleaningPower * deltaTime`, scales its visible dirt child from `1` to `0.25`, emits a small particle burst at zero, and disables its cleaning collider only after completion. Group progress is `1 - average(Remaining01)`.
 
-- [ ] **Step 5: Implement the highlight pulse**
+- [x] **Step 5: Implement the highlight pulse**
 
 `Pulse()` restarts a 1.2-second unscaled-time coroutine. Use `sin(normalizedTime * PI)` for intensity, set `_HighlightPulse` through a `MaterialPropertyBlock` on surface renderers, and call `SetHighlight` only on gap spots whose `Remaining01 > 0`. Do not modify cleaning progress.
 
-- [ ] **Step 6: Run tests and inspect the pulse through Unity MCP capture**
+- [x] **Step 6: Run tests and inspect the pulse through Unity MCP capture**
 
 Expected: highlight works at 0% and after partial cleaning, finished targets stay dark, and no progress changes.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```powershell
 git add Game/Assets/CleanToContinue
