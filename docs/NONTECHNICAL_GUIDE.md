@@ -61,4 +61,13 @@
 - **관련 파일:** `Game/Assets/CleanToContinue/Editor/EditModeTestCommand.cs`
 - **확인 방법:** Unity 메뉴의 `Tools > Clean to Continue > Run EditMode Tests`를 눌러도 같은 검사가 실행된다.
 
+### 청소 범위와 90% 완료 규칙
+
+- **하는 일:** 장비 표면을 작은 격자로 나눠 각 칸이 아직 더러운지 기억한다. 같은 칸을 반복해서 닦아도 처음 한 번만 진행도에 더한다.
+- **사용자에게 보이는 결과:** 마우스를 한곳에서 계속 문질러 진행도를 억지로 채울 수 없고, 실제로 여러 영역을 청소해야 한다.
+- **전체 진행도:** 먼지, 틈새와 광택 복원의 진행도를 같은 비중으로 평균낸다. 평균이 90%에 도달하면 완료 상태를 잠그고 완료 신호를 한 번만 보낸다.
+- **경계값 보호:** 컴퓨터의 소수 계산 오차 때문에 정확한 90%가 89.999…%로 취급되지 않도록 합산 과정은 더 정밀한 숫자 형식을 사용한다.
+- **관련 파일:** `Runtime/Surface/CoverageGrid.cs`, `Runtime/Progress/IProgressSource.cs`, `Runtime/Progress/StageProgressModel.cs`
+- **확인 방법:** `CoverageGridTests.cs`와 `StageProgressModelTests.cs`가 반복 청소, 범위 밖 UV, 동일 가중치, 89.9%, 정확한 90%와 완료 1회 조건을 검사한다.
+
 다음 구현에서 장비 회전, 오염, 진행도, 원형 UI, 완료 이미지와 Web 빌드 항목을 같은 형식으로 추가한다.

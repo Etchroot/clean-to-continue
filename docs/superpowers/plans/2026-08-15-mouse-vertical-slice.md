@@ -170,7 +170,7 @@ git commit -m "feat: add cleaning tool selection model"
 - Produces: `CoverageGrid.CreateFilled(int, int)`, `ApplyDisc(Vector2, float)`, and `Progress01`.
 - Produces: `StageProgressModel.Progress01`, `IsComplete`, `Refresh()`, and `Completed`.
 
-- [ ] **Step 1: Write failing coverage tests**
+- [x] **Step 1: Write failing coverage tests**
 
 ```csharp
 [Test]
@@ -191,7 +191,7 @@ public void UvOutsideRangeIsClamped()
 }
 ```
 
-- [ ] **Step 2: Write failing completion tests with a local fake progress source**
+- [x] **Step 2: Write failing completion tests with a local fake progress source**
 
 ```csharp
 [Test]
@@ -226,11 +226,11 @@ private sealed class FakeSource : IProgressSource
 }
 ```
 
-- [ ] **Step 3: Run both tests and verify they fail for missing types**
+- [x] **Step 3: Run both tests and verify they fail for missing types**
 
 Expected: failures name `CoverageGrid`, `IProgressSource`, and `StageProgressModel`.
 
-- [ ] **Step 4: Implement unique-cell coverage and equal-weight stage progress**
+- [x] **Step 4: Implement unique-cell coverage and equal-weight stage progress**
 
 Implementation rules:
 
@@ -247,11 +247,11 @@ public interface IProgressSource
 
 `StageProgressModel.Refresh()` averages its three sources with equal weight, clamps to `[0,1]`, and invokes `Completed` only when the previous state was incomplete and the new total is at least `0.90f`.
 
-- [ ] **Step 5: Run all EditMode tests**
+- [x] **Step 5: Run all EditMode tests**
 
 Expected: selection, coverage, 89.9%, 90.0%, and one-shot completion tests pass.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add Game/Assets/CleanToContinue
