@@ -9,6 +9,7 @@
 - 게임 기획과 제목 확정
 - 개발·심사 기록 체계 구축
 - Unity 6.3 LTS Universal 3D 프로젝트와 Codex–Unity 공식 MCP 연결 검증 완료
+- `01.MainMenu`부터 `06.Ending`까지 번호형 씬 골격과 Build Settings 구성 완료
 - 다음 핵심 목표: 마우스 스테이지 세로 슬라이스
 
 ## 프로젝트 구조

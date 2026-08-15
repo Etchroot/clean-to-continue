@@ -23,7 +23,7 @@
 
 에어건과 헝겊은 장비의 2D 마스크를 지워 넓은 표면 변화를 만든다. 면봉은 키 사이와 힌지에 배치한 작은 오염을 제거한다. 헝겊 청소에서는 별도 얼룩 그림을 지우는 대신 닦은 부분의 원래 광택이 Unity 조명에 다시 반응하도록 만든다. 전체 진행도가 90%에 도달하면 마지막 작은 흔적을 자동 정리해 픽셀 찾기로 플레이가 막히지 않게 한다.
 
-게임 흐름은 `MainMenu` → `Opening` → `MouseStage` → `KeyboardStage` → `HeadsetStage` → `Ending`의 여섯 씬으로 이어진다. 세 장비 씬은 공통 `StageRoot`를 사용하므로 UI와 청소 코드를 복사하지 않는다.
+게임 흐름은 `01.MainMenu` → `02.Opening` → `03.Mouse` → `04.Keyboard` → `05.Headset` → `06.Ending`의 여섯 씬으로 이어진다. 번호는 Unity의 Project 창과 Build Settings에서 실행 순서를 바로 알게 해준다. 세 장비 씬은 공통 `StageRoot`를 사용하므로 UI와 청소 코드를 복사하지 않는다.
 
 ## 현재 개발 환경
 
@@ -90,5 +90,15 @@
 - **일시정지와 Web 대응:** 강조 시간은 게임 속도와 무관한 실제 시간을 사용하므로 일시정지 상태나 느린 프레임에서도 끝난다.
 - **관련 파일:** `Runtime/Gap/GapDirtSpot.cs`, `GapDirtGroup.cs`, `Runtime/Highlight/HighlightController.cs`, `Runtime/Surface/SurfaceMaskLayer.cs`
 - **확인 방법:** EditMode 테스트 4개가 면봉 전용 진행도와 누락 참조를 검사하고 PlayMode 테스트가 진행도 0%와 완료된 지점이 섞인 상태의 강조를 검사한다.
+
+### 번호형 여섯 씬 골격
+
+- **하는 일:** 최종 게임 흐름에 필요한 여섯 씬을 `Assets/CleanToContinue/Scenes`에 미리 만들고 Build Settings에 01~06 순서로 등록한다.
+- **현재 화면:** 각 씬은 아직 완성 화면이 아니라 서로 다른 배경색, 씬 이름과 앞으로 들어갈 내용을 설명하는 안내 문구를 보여준다.
+- **공통 구조:** 모든 씬에는 `SceneRoot`, `EnvironmentRoot`, `ContentRoot`, `GameplayRoot`, 카메라, 조명, `UIRoot`와 `EventSystem`이 있다.
+- **사용자 작업 보호:** `Clean to Continue > Build Numbered Scene Skeletons` 메뉴를 다시 실행해도 사용자가 추가한 오브젝트를 삭제하지 않는다. 이미 열어 둔 씬도 닫지 않고, 기존 카메라·조명·UI의 위치나 색상 같은 설정도 기본값으로 되돌리지 않는다.
+- **SampleScene 처리:** Unity 템플릿의 `Assets/Scenes/SampleScene.unity` 파일은 삭제하지 않고 Build Settings에서만 제외했다.
+- **관련 파일:** `Editor/NumberedSceneBuilder.cs`, `Tests/EditMode/NumberedSceneScaffoldTests.cs`, `Assets/CleanToContinue/Scenes/*.unity`
+- **확인 방법:** Project 창의 `Assets/CleanToContinue/Scenes`에서 원하는 씬을 더블클릭하거나 현재 열려 있는 `01.MainMenu`의 Game 탭을 확인한다. EditMode 테스트는 실제 게임 씬을 수정하지 않는 Preview Scene과 테스트가 만든 임시 복사 씬에서 중복 생성, 사용자 설정과 열린 상태 보존을 검사한 뒤 임시 복사본만 지운다.
 
 다음 구현에서 장비 회전, 입력, 원형 UI, 완료 이미지와 Web 빌드 항목을 같은 형식으로 추가한다.

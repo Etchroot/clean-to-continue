@@ -4,7 +4,7 @@
 
 **Goal:** Build a browser-playable vertical slice that starts at the main menu, plays the short opening, lets the player clean a mouse with three freely switchable tools, completes at 90%, and displays the first memory reward.
 
-**Architecture:** Keep gameplay rules in small testable C# models, then connect them to Unity components in a shared `StageRoot`. Surface dust and polish use UV masks, gap dirt uses small world-space targets, and all three report progress to one completion model. The first slice implements `MainMenu`, `Opening`, and `MouseStage`; the approved keyboard, headset, and ending scenes remain later roadmap work.
+**Architecture:** Keep gameplay rules in small testable C# models, then connect them to Unity components in a shared `StageRoot`. Surface dust and polish use UV masks, gap dirt uses small world-space targets, and all three report progress to one completion model. All six numbered scene skeletons exist first; the initial playable slice fills `01.MainMenu`, `02.Opening`, and `03.Mouse`, while `04.Keyboard`, `05.Headset`, and `06.Ending` remain placeholders for later roadmap work.
 
 **Tech Stack:** Unity 6000.3.22f1, Universal Render Pipeline 17.3.0, Input System 1.17.0, uGUI, Unity Test Framework 1.6.0, C#, Shader Graph/ShaderLab, Web platform.
 
@@ -53,6 +53,7 @@
 | `Game/Assets/CleanToContinue/Runtime/Flow/OpeningSequence.cs` | Ten-second opening and skip behavior. |
 | `Game/Assets/CleanToContinue/Runtime/Audio/CleaningAudioController.cs` | Tool loop, selection, highlight, and completion audio. |
 | `Game/Assets/CleanToContinue/Editor/VerticalSliceSceneBuilder.cs` | Reproducibly builds the three slice scenes and prefabs. |
+| `Game/Assets/CleanToContinue/Editor/NumberedSceneBuilder.cs` | Creates and preserves the six numbered scene skeletons and build order. |
 | `Game/Assets/CleanToContinue/Editor/WebBuildCommand.cs` | Deterministic Web build entry point. |
 | `Game/Assets/CleanToContinue/Tests/EditMode/` | Pure rule and coverage tests. |
 | `Game/Assets/CleanToContinue/Tests/PlayMode/` | Scene wiring and completion smoke tests. |
@@ -540,7 +541,7 @@ Settings use exact `PlayerPrefs` keys `ctc.masterVolume`, `ctc.sfxVolume`, and `
 
 - [ ] **Step 4: Implement stage completion**
 
-When `StageProgressModel.Completed` fires: set `InputLocked`, stop tool loops, animate the wheel from current value to 100% over 0.35 seconds, call `ForceFinish()` on all layers, play one completion sound, darken the background, and open the mouse memory panel. The temporary continue action returns to `MainMenu`; Task 3 of the roadmap will change it to `KeyboardStage`.
+When `StageProgressModel.Completed` fires: set `InputLocked`, stop tool loops, animate the wheel from current value to 100% over 0.35 seconds, call `ForceFinish()` on all layers, play one completion sound, darken the background, and open the mouse memory panel. The temporary continue action returns to `01.MainMenu`; Task 3 of the roadmap will change it to `04.Keyboard`.
 
 - [ ] **Step 5: Add deterministic prototype audio**
 
@@ -567,9 +568,10 @@ git commit -m "feat: add stage UI audio and memory reward"
 - Create: `Game/Assets/CleanToContinue/Runtime/UI/MainMenuView.cs`
 - Create: `Game/Assets/CleanToContinue/Editor/CleanToContinue.Editor.asmdef`
 - Create: `Game/Assets/CleanToContinue/Editor/VerticalSliceSceneBuilder.cs`
-- Create: `Game/Assets/CleanToContinue/Scenes/MainMenu.unity`
-- Create: `Game/Assets/CleanToContinue/Scenes/Opening.unity`
-- Create: `Game/Assets/CleanToContinue/Scenes/MouseStage.unity`
+- Modify: `Game/Assets/CleanToContinue/Editor/NumberedSceneBuilder.cs`
+- Modify: `Game/Assets/CleanToContinue/Scenes/01.MainMenu.unity`
+- Modify: `Game/Assets/CleanToContinue/Scenes/02.Opening.unity`
+- Modify: `Game/Assets/CleanToContinue/Scenes/03.Mouse.unity`
 - Create: `Game/Assets/CleanToContinue/Prefabs/StageRoot.prefab`
 - Create: `Game/Assets/CleanToContinue/Prefabs/PrototypeMouse.prefab`
 - Modify: `Game/ProjectSettings/EditorBuildSettings.asset`
@@ -588,7 +590,7 @@ Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo(expectedName));
 Assert.That(Object.FindFirstObjectByType<EventSystem>(), Is.Not.Null);
 ```
 
-For `MainMenu`, require Start, Settings, and Credits buttons. For `Opening`, require Skip and a timed transition component. For `MouseStage`, require one `StageController`, three progress sources with distinct tools, one `EquipmentRotator`, and one memory panel.
+For `01.MainMenu`, require Start, Settings, and Credits buttons. For `02.Opening`, require Skip and a timed transition component. For `03.Mouse`, require one `StageController`, three progress sources with distinct tools, one `EquipmentRotator`, and one memory panel.
 
 - [ ] **Step 2: Run PlayMode tests and confirm the scenes are missing**
 
@@ -608,7 +610,7 @@ Use this editor assembly definition:
 Add menu item `Clean to Continue/Build Vertical Slice Scenes`. It must be idempotent: create or update project-owned objects without deleting user assets. Build:
 
 ```text
-MainMenu
+01.MainMenu
   Main Camera
   EventSystem
   Canvas
@@ -619,14 +621,14 @@ MainMenu
     SettingsPanel (hidden)
     CreditsPanel (hidden)
 
-Opening
+02.Opening
   Main Camera
   Directional Light
   DeskPlaceholder
   Canvas/OpeningLine
   Canvas/SkipButton
 
-MouseStage
+03.Mouse
   Main Camera
   Directional Light
   ReflectionProbe
@@ -643,14 +645,17 @@ Use Unity primitives for the temporary desk and mouse so no third-party asset bl
 
 - [ ] **Step 4: Wire scene flow**
 
-Start loads `Opening`; Skip or the 10-second timer loads `MouseStage`; the memory Continue button returns to `MainMenu`. Opening displays `정말 오랜만이다. 그런데… 이걸 먼저 치워야겠는데.` and the memory panel displays `그때는 바라보는 것만으로도 새로운 세계가 열렸다.` Settings exposes master volume, effects volume, and rotation sensitivity. Credits list the user, Codex, Unity, and the exact prototype line `Third-party assets: none in this prototype.`; replace that line only after an approved asset is actually integrated and recorded in `submission/ASSET_CREDITS.md`.
+Start loads `02.Opening`; Skip or the 10-second timer loads `03.Mouse`; the memory Continue button returns to `01.MainMenu`. Opening displays `정말 오랜만이다. 그런데… 이걸 먼저 치워야겠는데.` and the memory panel displays `그때는 바라보는 것만으로도 새로운 세계가 열렸다.` Settings exposes master volume, effects volume, and rotation sensitivity. Credits list the user, Codex, Unity, and the exact prototype line `Third-party assets: none in this prototype.`; replace that line only after an approved asset is actually integrated and recorded in `submission/ASSET_CREDITS.md`.
 
 - [ ] **Step 5: Add build settings in exact order**
 
 ```text
-0 Assets/CleanToContinue/Scenes/MainMenu.unity
-1 Assets/CleanToContinue/Scenes/Opening.unity
-2 Assets/CleanToContinue/Scenes/MouseStage.unity
+0 Assets/CleanToContinue/Scenes/01.MainMenu.unity
+1 Assets/CleanToContinue/Scenes/02.Opening.unity
+2 Assets/CleanToContinue/Scenes/03.Mouse.unity
+3 Assets/CleanToContinue/Scenes/04.Keyboard.unity
+4 Assets/CleanToContinue/Scenes/05.Headset.unity
+5 Assets/CleanToContinue/Scenes/06.Ending.unity
 ```
 
 - [ ] **Step 6: Run scene smoke tests and inspect through MCP**
@@ -677,12 +682,12 @@ git commit -m "feat: assemble mouse vertical slice scenes"
 - Modify: `submission/ASSET_CREDITS.md` only if approved external assets were actually used.
 
 **Interfaces:**
-- Consumes: the three-scene vertical slice.
+- Consumes: the six-scene numbered build list with the first three scenes forming the playable vertical slice.
 - Produces: menu command and batch entry `CleanToContinue.Editor.WebBuildCommand.BuildVerticalSlice`.
 
 - [ ] **Step 1: Add a deterministic Web build command**
 
-The command validates the three required scenes, creates `Game/Builds/Web` if absent, and calls `BuildPipeline.BuildPlayer` for `BuildTarget.WebGL`. Treat any result other than `BuildResult.Succeeded` as an exception and log output size and duration.
+The command validates the six required numbered scenes, creates `Game/Builds/Web` if absent, and calls `BuildPipeline.BuildPlayer` for `BuildTarget.WebGL`. Treat any result other than `BuildResult.Succeeded` as an exception and log output size and duration.
 
 - [ ] **Step 2: Run the full automated suite**
 
@@ -718,7 +723,7 @@ Keep this terminal session open only while testing and stop it with `Ctrl+C` aft
 
 - [ ] **Step 6: Verify the actual Chrome build**
 
-Open `http://localhost:8000` in current desktop Chrome. Check: first click unlocks audio, Start → Opening → MouseStage works, Skip works, left/right drags do not conflict, all three tools work in arbitrary order, `Space` works at 0%, UI clicks do not clean, focus loss stops sound, 90% completes once, memory panel opens, Continue returns to menu, refresh starts cleanly, and no browser console errors appear.
+Open `http://localhost:8000` in current desktop Chrome. Check: first click unlocks audio, `01.MainMenu` → `02.Opening` → `03.Mouse` works, Skip works, left/right drags do not conflict, all three tools work in arbitrary order, `Space` works at 0%, UI clicks do not clean, focus loss stops sound, 90% completes once, memory panel opens, Continue returns to menu, refresh starts cleanly, and no browser console errors appear.
 
 - [ ] **Step 7: Repeat the browser matrix in Edge**
 
