@@ -392,3 +392,31 @@
 **다음 작업**
 
 - 조립 단계에서 선택한 하이라이트 연결 방식이 두 경로 중 어느 것인지 Inspector와 장면 테스트로 확인한다.
+
+## 2026-08-16 — 스테이지 UI·임시 오디오·완료 보상 인터페이스 구현
+
+**목표**
+
+- 다음 `03.Mouse` 조립 작업에서 바로 연결할 수 있도록 진행 휠, 도구 선택 UI, 코드 생성 임시 소리와 완료 보상 인터페이스를 만든다.
+- 90% 완료가 한 번만 발생하고 이후 입력이 잠기는 규칙을 실제 PlayMode 경로로 보호한다.
+
+**Codex 작업**
+
+- `StageController`가 선택·진행 모델과 세 진행도 소스를 연결하고, 완료 시 입력 컴포넌트를 잠그며 모든 표면·틈새 레이어를 강제 완료하도록 구현했다.
+- 진행 휠의 원형 채움과 정수 퍼센트, 도구 버튼의 선택 확대·4픽셀 연한 금색 테두리·도구별 원형 진행도·100% 체크 표시를 담당하는 View를 추가했다.
+- 마우스 추억 대사와 어두운 배경을 여는 `MemoryPanelView`를 추가했다. 임시 계속 동작은 계획대로 `01.MainMenu`를 로드한다.
+- 첫 상호작용 뒤 고정 난수 씨앗으로 44.1kHz 에어건·면봉·헝겊 루프와 두 음 완료 차임을 만드는 임시 오디오를 구현했다.
+- `ctc.masterVolume`, `ctc.sfxVolume`, `ctc.rotationSensitivity` 세 설정 키와 0.8·1.0·1.0 기본값만 사용하도록 고정했다.
+
+**TDD와 검증**
+
+- RED: `StageControllerTests`를 먼저 추가하자 `CleanToContinue.Stage`, `CleanToContinue.UI`와 `StageController`가 없다는 Unity 컴파일 오류 4건이 발생했고 새 PlayMode 결과 파일도 생성되지 않았다.
+- GREEN: 실제 `StageProgressModel.Completed → StageController → MemoryPanelView.Opened` 경로를 통해 89.9%에서는 미잠금, 90%에서는 입력 잠금, 이후 100% 갱신에도 패널 1회 열림을 확인했다.
+- 열린 Unity Editor의 EditMode 전체 21개와 PlayMode 전체 14개가 통과했고 실패·건너뜀은 0개였다.
+- 최종 Unity 콘솔 오류는 0개였다. Unity AI Assistant 계정 API 접근 지연은 기존 패키지 경고이며 게임 코드와 분리했다.
+
+**제한과 다음 작업**
+
+- 사용자 지침에 따라 번호형 씬과 Task 5 입력 동작은 수정하지 않았다.
+- 실제 Canvas·버튼·이미지·AudioSource 배치 및 1920×1080·1366×768 화면 검수는 다음 `03.Mouse` 씬 조립 작업에서 수행한다.
+- 코드 생성 파형은 기능 확인용 임시 소리이며 최종 사운드 에셋과 폴리싱 대상이다.

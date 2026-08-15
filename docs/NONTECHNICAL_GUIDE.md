@@ -111,4 +111,14 @@
 - **관련 파일:** `Editor/NumberedSceneBuilder.cs`, `Tests/EditMode/NumberedSceneScaffoldTests.cs`, `Assets/CleanToContinue/Scenes/*.unity`
 - **확인 방법:** Project 창의 `Assets/CleanToContinue/Scenes`에서 원하는 씬을 더블클릭하거나 현재 열려 있는 `01.MainMenu`의 Game 탭을 확인한다. EditMode 테스트는 실제 게임 씬을 수정하지 않는 Preview Scene과 테스트가 만든 임시 복사 씬에서 중복 생성, 사용자 설정과 열린 상태 보존을 검사한 뒤 임시 복사본만 지운다.
 
-다음 구현에서 장비 회전, 입력, 원형 UI, 완료 이미지와 Web 빌드 항목을 같은 형식으로 추가한다.
+### 스테이지 UI·소리·완료 보상 연결
+
+- **하는 일:** `StageController`가 도구 선택, 세 오염 진행도, 입력 잠금, 임시 소리와 추억 패널을 한 흐름으로 연결한다. 전체 진행도가 90%에 처음 도달하면 입력을 잠그고 남은 오염을 자동 정리하며, 진행 휠을 0.35초 동안 100%로 채운 뒤 완료음과 마우스 추억 패널을 한 번만 연다.
+- **오른쪽 UI:** `ProgressWheelView`는 원형 채움과 정수 퍼센트를 같은 값으로 표시한다. `ToolSelectorView`는 에어건·면봉·헝겊 선택, 1.08배 확대, 4픽셀 연한 금색 테두리, 도구별 원형 진행도와 100% 체크 표시를 담당한다. 실제 위치와 88×88 버튼 조립은 다음 장면 조립 작업에서 연결한다.
+- **임시 소리:** `PrototypeAudioFactory`는 첫 상호작용 뒤 44.1kHz 소리를 코드로 만든다. 고정된 난수 씨앗을 사용하므로 같은 빌드에서는 에어건·면봉·헝겊 소리가 항상 같고, 완료음은 두 음의 짧은 차임이다. `CleaningAudioController`는 청소 중 선택된 도구만 들리게 전환하고 입력 해제·포커스 상실·UI 조작·완료 시 루프를 멈춘다.
+- **설정값:** 음량과 회전 감도는 `ctc.masterVolume`, `ctc.sfxVolume`, `ctc.rotationSensitivity` 세 키만 읽으며 기본값은 각각 0.8, 1.0, 1.0이다.
+- **임시 완료 흐름:** 마우스 추억 패널의 계속 버튼은 아직 `01.MainMenu`로 돌아간다. 키보드 스테이지가 연결되는 로드맵 Task 3에서 `04.Keyboard`로 바꾼다.
+- **관련 파일:** `Runtime/Stage/StageController.cs`, `Runtime/UI/`, `Runtime/Audio/`, `Tests/PlayMode/StageControllerTests.cs`
+- **확인 방법:** 열린 Unity Editor의 PlayMode 테스트가 89.9%에서는 입력이 열려 있고 90%에서 한 번만 잠기며 추억 패널도 한 번만 열리는지 검사한다. 실제 1920×1080·1366×768 배치는 다음 씬 조립 작업에서 확인한다.
+
+다음 구현에서 실제 `03.Mouse` 장면 조립과 Web 빌드 항목을 같은 형식으로 추가한다.
