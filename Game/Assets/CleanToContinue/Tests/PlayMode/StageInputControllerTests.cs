@@ -32,6 +32,18 @@ namespace CleanToContinue.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator SpaceUsesInteractionHighlightWhenNoDirectHighlightIsConfigured()
+        {
+            var fixture = CreateFixture(false, true);
+            var keyboard = CreateKeyboard();
+
+            yield return PressAndRelease(keyboard, Key.Space);
+            yield return new WaitForSecondsRealtime(0.2f);
+
+            Assert.That(ReadHighlight(fixture.Surface), Is.GreaterThan(0f));
+        }
+
+        [UnityTest]
         public IEnumerator NumberKeysSelectToolsThroughEnabledInputActions()
         {
             var fixture = CreateFixture();
@@ -78,7 +90,9 @@ namespace CleanToContinue.Tests.PlayMode
             yield return null;
         }
 
-        private StageInputFixture CreateFixture()
+        private StageInputFixture CreateFixture(
+            bool provideDirectHighlight = true,
+            bool configureInteractionHighlight = false)
         {
             var root = new GameObject("Stage Input Test");
             createdObjects.Add(root);
@@ -101,7 +115,20 @@ namespace CleanToContinue.Tests.PlayMode
             createdObjects.Add(highlightObject);
             var highlight = highlightObject.AddComponent<HighlightController>();
             highlight.Configure(new[] { surface }, new CleanToContinue.Gap.GapDirtSpot[0]);
-            input.Configure(interaction, highlight, selection);
+            if (configureInteractionHighlight)
+            {
+                interaction.Configure(
+                    null,
+                    selection,
+                    null,
+                    new SurfaceMaskLayer[0],
+                    null,
+                    0.1f,
+                    0.5f,
+                    highlight);
+            }
+
+            input.Configure(interaction, provideDirectHighlight ? highlight : null, selection);
 
             return new StageInputFixture
             {

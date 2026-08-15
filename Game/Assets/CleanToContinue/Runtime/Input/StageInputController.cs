@@ -49,7 +49,10 @@ namespace CleanToContinue.Input
             highlightController = highlight;
             toolSelection = selection ?? new ToolSelectionModel();
             interactionController?.SetToolSelection(toolSelection);
-            interactionController?.SetHighlightController(highlightController);
+            if (highlightController != null)
+            {
+                interactionController?.SetHighlightController(highlightController);
+            }
         }
 
         private void OnEnable()
