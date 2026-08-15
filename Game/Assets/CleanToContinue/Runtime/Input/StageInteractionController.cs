@@ -51,6 +51,11 @@ namespace CleanToContinue.Input
             toolSelection = selection ?? new ToolSelectionModel();
         }
 
+        public void SetHighlightController(HighlightController highlight)
+        {
+            highlightController = highlight;
+        }
+
         public void PulseHighlight()
         {
             highlightController?.Pulse();

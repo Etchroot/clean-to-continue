@@ -359,3 +359,20 @@
 **다음 작업**
 
 - `03.Mouse` 조립 단계에서 이 입력 컴포넌트를 실제 StageRoot·UI·오디오와 연결하고, 물리 마우스/브라우저 입력을 포함한 장면 검증을 수행한다.
+
+## 2026-08-16 — 입력 하이라이트 의존성 회귀 수정
+
+**문제와 수정**
+
+- 코드 검토에서 `StageInputController.Configure`가 받은 `HighlightController`를 저장해도 상호작용 컨트롤러가 존재하면 `Space`가 그쪽의 비어 있는 참조만 호출할 수 있음을 발견했다.
+- 직접 설정된 하이라이트를 우선 실행하고, 구성 시 같은 참조를 `StageInteractionController`에도 동기화했다. 직접 참조가 없는 기존 조립 방식은 상호작용 컨트롤러 경로로 안전하게 대체된다.
+
+**TDD와 검증**
+
+- RED: 실제 가상 Keyboard의 `<Keyboard>/space` 이벤트를 보낸 뒤 설정된 표면의 `_HighlightPulse`가 `0`인 회귀를 재현했다. PlayMode는 통과 11개, 실패 1개였다.
+- 테스트 어셈블리가 Input System API를 직접 사용하므로 `CleanToContinue.PlayModeTests.asmdef`에 공식 `Unity.InputSystem` 참조를 추가했다.
+- GREEN: 실제 Keyboard의 `Space`와 `2`→`3`→`1` 이벤트로 하이라이트 및 도구 선택을 검사한 뒤, PlayMode 테스트 12개가 모두 통과했다.
+
+**다음 작업**
+
+- `03.Mouse` 조립 단계에서 실제 UI 버튼·브라우저 포커스와 함께 입력 루프를 최종 검증한다.

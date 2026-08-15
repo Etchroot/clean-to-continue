@@ -49,6 +49,7 @@ namespace CleanToContinue.Input
             highlightController = highlight;
             toolSelection = selection ?? new ToolSelectionModel();
             interactionController?.SetToolSelection(toolSelection);
+            interactionController?.SetHighlightController(highlightController);
         }
 
         private void OnEnable()
@@ -140,10 +141,13 @@ namespace CleanToContinue.Input
 
         private void PerformHighlight()
         {
-            interactionController?.PulseHighlight();
-            if (interactionController == null)
+            if (highlightController != null)
             {
-                highlightController?.Pulse();
+                highlightController.Pulse();
+            }
+            else
+            {
+                interactionController?.PulseHighlight();
             }
 
             HighlightPerformed?.Invoke();

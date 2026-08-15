@@ -99,7 +99,7 @@
 - **청소 대상 구분:** Unity의 8번 레이어 이름은 `Cleanable`이다. 입력 광선은 이 레이어만 검사하므로 책상과 장식물은 클릭해도 청소되지 않는다.
 - **포커스 보호:** 브라우저 탭이나 Unity 창이 포커스를 잃으면, 나중에 연결될 도구 루프 사운드에 정지 신호를 보낸다.
 - **관련 파일:** `Runtime/Input/StageInputController.cs`, `StageInteractionController.cs`, `EquipmentRotator.cs`, `Tests/EditMode/EquipmentRotatorTests.cs`, `Tests/PlayMode/StageInteractionControllerTests.cs`, `Game/ProjectSettings/TagManager.asset`
-- **확인 방법:** Unity의 열린 Editor에서 EditMode 21개와 PlayMode 10개 테스트를 실행한다. 새 PlayMode 테스트 다섯 개는 도구별 Raycast 라우팅, 우클릭 회전 우선, UI 시작 클릭의 해제 전 차단을 실제 Camera·Collider·오염 컴포넌트로 검사한다.
+- **확인 방법:** Unity의 열린 Editor에서 EditMode 21개와 PlayMode 12개 테스트를 실행한다. 새 PlayMode 테스트는 도구별 Raycast 라우팅, 우클릭 회전 우선, UI 시작 클릭의 해제 전 차단과 실제 키보드 `Space`·`1`·`2`·`3` 입력을 검사한다.
 
 ### 번호형 여섯 씬 골격
 

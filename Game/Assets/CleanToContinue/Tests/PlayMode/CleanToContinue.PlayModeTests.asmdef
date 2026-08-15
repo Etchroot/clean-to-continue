@@ -1,7 +1,8 @@
 {
   "name": "CleanToContinue.PlayModeTests",
   "references": [
-    "CleanToContinue.Runtime"
+    "CleanToContinue.Runtime",
+    "Unity.InputSystem"
   ],
   "optionalUnityReferences": [
     "TestAssemblies"
