@@ -24,8 +24,10 @@ Unity의 인에디터 유료 Assistant는 핵심 의존성이 아니다. 나중�
 3. Codex MCP 서버 명령을 `%USERPROFILE%\.unity\relay\relay_win.exe --mcp`로 등록한다.
 4. 프로젝트 경로 인수로 `Game/`을 지정해 여러 Unity 인스턴스가 있어도 이 프로젝트에 연결한다.
 5. Codex를 다시 시작한다.
-6. Unity의 `Pending Connections`에서 사용자가 Codex 연결을 승인한다.
+6. 최초 승인 요청이 표시되면 Unity의 `Pending Connections`에서 사용자가 Codex 연결을 승인한다. 이미 승인됐거나 자동 승인된 연결은 이 항목 없이 바로 `Connected Clients`에 `Accepted`로 표시될 수 있다.
 7. Codex에서 콘솔 메시지와 현재 씬 구조를 읽어 연결을 검증한다.
+
+2026-08-15 검증에서는 Unity Bridge가 `Running`, Codex 클라이언트가 `Accepted`로 표시됐으며 Codex가 콘솔과 현재 씬의 GameObject·컴포넌트를 정상적으로 읽었다.
 
 공식 문서: <https://docs.unity3d.com/Packages/com.unity.ai.assistant@2.17/manual/integration/unity-mcp-get-started.html>
 

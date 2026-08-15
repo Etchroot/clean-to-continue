@@ -71,7 +71,21 @@
 
 - Unity의 `Project Settings > AI > Unity MCP Server`에서 Unity Bridge가 초록색 `Running` 상태임을 직접 확인했다.
 
-**남은 검증**
+**연결 검증**
 
-- Codex 재시작 후 Unity의 `Pending Connections`에서 최초 연결 허용
-- Codex에서 Unity 콘솔, 열린 Scene과 GameObject 정보 읽기
+- 사용자가 공유한 Unity 설정 화면에서 Bridge `Running`과 Codex 클라이언트 `Accepted` 상태를 확인했다.
+- 이미 승인된 연결이 `Connected Clients`에 표시되어 별도의 `Pending Connections` 단계가 필요하지 않았다.
+- Codex가 Unity 콘솔을 직접 읽어 오류 0건과 경고 2건을 확인했다.
+- Codex가 읽기 전용 명령으로 저장 전 기본 씬의 루트 GameObject 2개를 확인했다.
+  - `Main Camera`: `Transform`, `Camera`, `AudioListener`
+  - `Directional Light`: `Transform`, `Light`, `UniversalAdditionalLightData`
+- 명령의 C# 컴파일과 실행이 모두 성공해 Codex–Unity MCP 왕복 연결을 검증했다.
+
+**참고 경고**
+
+- Unity AI 계정 API 접근 지연 경고가 1건 있었으나 유료 Assistant 계정 기능에 관한 것으로 MCP 읽기에는 영향을 주지 않았다.
+- Microsoft Store판 Codex 실행 파일의 Windows 서명 정보 해석 경고가 1건 있었으나 클라이언트는 `Accepted`였고 MCP 명령은 정상 실행됐다.
+
+**다음 작업**
+
+- 기본 씬을 프로젝트 에셋으로 저장하고 마우스 세로 슬라이스의 테스트부터 구현
