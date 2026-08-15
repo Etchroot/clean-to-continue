@@ -43,6 +43,8 @@ namespace CleanToContinue.Stage
         private Coroutine completionWheelRoutine;
         private bool initialized;
         private bool cleaningHeld;
+        private bool cleanInputWasHeld;
+        private bool cleanPressStartedOverUi;
 
         public bool InputLocked { get; private set; }
 
@@ -122,7 +124,7 @@ namespace CleanToContinue.Stage
 
             if (inputController != null)
             {
-                inputController.CleanHeldChanged += HandleCleanHeldChanged;
+                inputController.CleanContextChanged += UpdateCleaningAudio;
             }
 
             ApplySettings();
@@ -195,14 +197,19 @@ namespace CleanToContinue.Stage
             }
         }
 
-        private void HandleCleanHeldChanged(bool held)
-        {
-            UpdateCleaningAudio(held, inputController != null && inputController.PointerOverUi);
-        }
-
         public void UpdateCleaningAudio(bool held, bool pointerOverUi)
         {
-            cleaningHeld = held && !pointerOverUi && !InputLocked;
+            if (held && !cleanInputWasHeld)
+            {
+                cleanPressStartedOverUi = pointerOverUi;
+            }
+            else if (!held)
+            {
+                cleanPressStartedOverUi = false;
+            }
+
+            cleanInputWasHeld = held;
+            cleaningHeld = held && !cleanPressStartedOverUi && !pointerOverUi && !InputLocked;
             if (cleaningHeld)
             {
                 cleaningAudio?.BeginCleaning(selectionModel.Selected);
@@ -320,7 +327,7 @@ namespace CleanToContinue.Stage
 
             if (inputController != null)
             {
-                inputController.CleanHeldChanged -= HandleCleanHeldChanged;
+                inputController.CleanContextChanged -= UpdateCleaningAudio;
             }
 
             if (completionWheelRoutine != null)

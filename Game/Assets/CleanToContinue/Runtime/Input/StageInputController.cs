@@ -28,6 +28,9 @@ namespace CleanToContinue.Input
         private InputAction clothAction;
         private Vector2 previousPointerPosition;
         private bool hasPreviousPointerPosition;
+        private bool hasCleanContext;
+        private bool previousCleanContextHeld;
+        private bool previousCleanContextPointerOverUi;
 
         public Vector2 PointerPosition { get; private set; }
         public bool PointerOverUi { get; private set; }
@@ -37,6 +40,7 @@ namespace CleanToContinue.Input
 
         public event Action<Vector2> PointerPositionChanged;
         public event Action<bool> CleanHeldChanged;
+        public event Action<bool, bool> CleanContextChanged;
         public event Action<bool> RotateHeldChanged;
         public event Action HighlightPerformed;
         public event Action<CleaningTool> NumericToolSelected;
@@ -80,6 +84,7 @@ namespace CleanToContinue.Input
 
             PointerOverUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
             SetCleanHeld(cleanAction.IsPressed());
+            PublishCleanContext();
             SetRotateHeld(rotateAction.IsPressed());
             interactionController?.ProcessFrame(
                 PointerPosition,
@@ -94,6 +99,7 @@ namespace CleanToContinue.Input
             StopContinuousToolAudio();
             DisposeActions();
             hasPreviousPointerPosition = false;
+            hasCleanContext = false;
         }
 
         private void OnApplicationFocus(bool hasFocus)
@@ -141,6 +147,21 @@ namespace CleanToContinue.Input
 
             IsRotateHeld = held;
             RotateHeldChanged?.Invoke(held);
+        }
+
+        private void PublishCleanContext()
+        {
+            if (hasCleanContext
+                && previousCleanContextHeld == IsCleanHeld
+                && previousCleanContextPointerOverUi == PointerOverUi)
+            {
+                return;
+            }
+
+            hasCleanContext = true;
+            previousCleanContextHeld = IsCleanHeld;
+            previousCleanContextPointerOverUi = PointerOverUi;
+            CleanContextChanged?.Invoke(IsCleanHeld, PointerOverUi);
         }
 
         private void PerformHighlight()

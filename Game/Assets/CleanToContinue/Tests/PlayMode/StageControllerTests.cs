@@ -4,11 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using CleanToContinue.Audio;
 using CleanToContinue.Core;
+using CleanToContinue.Input;
 using CleanToContinue.Progress;
 using CleanToContinue.Stage;
 using CleanToContinue.UI;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 
@@ -17,6 +22,7 @@ namespace CleanToContinue.Tests.PlayMode
     public sealed class StageControllerTests
     {
         private readonly List<GameObject> createdObjects = new List<GameObject>();
+        private readonly List<InputDevice> createdDevices = new List<InputDevice>();
 
         [UnityTest]
         public IEnumerator NinetyPercentCompletesOnceAndLocksInput()
@@ -45,11 +51,57 @@ namespace CleanToContinue.Tests.PlayMode
 
             stage.Controller.UpdateCleaningAudio(true, false);
             yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(AudibleLoopCount(stage.Audio), Is.EqualTo(0));
+
+            stage.Controller.UpdateCleaningAudio(false, false);
+            stage.Controller.UpdateCleaningAudio(true, false);
+            yield return new WaitForSecondsRealtime(0.1f);
             Assert.That(AudibleLoopCount(stage.Audio), Is.EqualTo(1));
 
             stage.Controller.UpdateCleaningAudio(true, true);
             yield return null;
             Assert.That(AudibleLoopCount(stage.Audio), Is.EqualTo(0));
+
+            stage.Controller.UpdateCleaningAudio(true, false);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(AudibleLoopCount(stage.Audio), Is.EqualTo(1));
+        }
+
+        [UnityTest]
+        public IEnumerator HeldGameplayCleanStopsOnUiEntryAndResumesOnExit()
+        {
+            var fixture = CreateInputAudioFixture();
+            var mouse = InputSystem.AddDevice<Mouse>();
+            createdDevices.Add(mouse);
+            var gameplayPoint = new Vector2(10f, 10f);
+            var uiPoint = new Vector2(Screen.width - 10f, Screen.height - 10f);
+
+            yield return SetMouseState(mouse, gameplayPoint, false);
+            yield return SetMouseState(mouse, gameplayPoint, true);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(AudibleLoopCount(fixture.Audio), Is.EqualTo(1));
+
+            yield return SetMouseState(mouse, uiPoint, true);
+            yield return null;
+            Assert.That(AudibleLoopCount(fixture.Audio), Is.EqualTo(0));
+
+            yield return SetMouseState(mouse, gameplayPoint, true);
+            yield return null;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(AudibleLoopCount(fixture.Audio), Is.EqualTo(1));
+
+            yield return SetMouseState(mouse, gameplayPoint, false);
+            yield return SetMouseState(mouse, uiPoint, false);
+            yield return SetMouseState(mouse, uiPoint, true);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(AudibleLoopCount(fixture.Audio), Is.EqualTo(0));
+
+            yield return SetMouseState(mouse, gameplayPoint, true);
+            yield return null;
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.That(AudibleLoopCount(fixture.Audio), Is.EqualTo(0));
+
+            yield return SetMouseState(mouse, gameplayPoint, false);
         }
 
         [UnityTest]
@@ -83,6 +135,15 @@ namespace CleanToContinue.Tests.PlayMode
         [UnityTearDown]
         public IEnumerator TearDown()
         {
+            foreach (var device in createdDevices)
+            {
+                if (device != null && device.added)
+                {
+                    InputSystem.RemoveDevice(device);
+                }
+            }
+
+            createdDevices.Clear();
             foreach (var createdObject in createdObjects)
             {
                 if (createdObject != null)
@@ -164,6 +225,66 @@ namespace CleanToContinue.Tests.PlayMode
             return fixture;
         }
 
+        private InputAudioFixture CreateInputAudioFixture()
+        {
+            var eventSystemObject = new GameObject("Input Audio Event System");
+            var canvasObject = new GameObject("Input Audio Canvas", typeof(RectTransform));
+            var uiBlockerObject = new GameObject("Input Audio UI Blocker", typeof(RectTransform));
+            var stageObject = new GameObject("Input Audio Stage");
+            var audioObject = new GameObject("Input Audio Controller");
+            createdObjects.Add(eventSystemObject);
+            createdObjects.Add(canvasObject);
+            createdObjects.Add(uiBlockerObject);
+            createdObjects.Add(stageObject);
+            createdObjects.Add(audioObject);
+
+            var eventSystem = eventSystemObject.AddComponent<EventSystem>();
+            var inputModule = eventSystemObject.AddComponent<InputSystemUIInputModule>();
+            inputModule.AssignDefaultActions();
+            EventSystem.current = eventSystem;
+
+            var canvas = canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasObject.AddComponent<GraphicRaycaster>();
+            uiBlockerObject.transform.SetParent(canvasObject.transform, false);
+            var blockerRect = uiBlockerObject.GetComponent<RectTransform>();
+            blockerRect.anchorMin = new Vector2(0.5f, 0f);
+            blockerRect.anchorMax = Vector2.one;
+            blockerRect.offsetMin = Vector2.zero;
+            blockerRect.offsetMax = Vector2.zero;
+            uiBlockerObject.AddComponent<CanvasRenderer>();
+            uiBlockerObject.AddComponent<Image>().raycastTarget = true;
+
+            var interaction = stageObject.AddComponent<StageInteractionController>();
+            var input = stageObject.AddComponent<StageInputController>();
+            var selection = new ToolSelectionModel();
+            input.Configure(interaction, null, selection);
+
+            var audio = audioObject.AddComponent<CleaningAudioController>();
+            var controller = stageObject.AddComponent<StageController>();
+            controller.ConfigureScene(
+                Array.Empty<CleanToContinue.Surface.SurfaceMaskLayer>(),
+                null,
+                input,
+                interaction,
+                null,
+                null,
+                null,
+                null,
+                audio);
+            controller.Initialize();
+
+            return new InputAudioFixture(audio);
+        }
+
+        private static IEnumerator SetMouseState(Mouse mouse, Vector2 position, bool leftPressed)
+        {
+            var state = new MouseState { position = position }.WithButton(MouseButton.Left, leftPressed);
+            InputSystem.QueueStateEvent(mouse, state);
+            InputSystem.Update();
+            yield return null;
+        }
+
         private static int AudibleLoopCount(CleaningAudioController audio)
         {
             return audio.GetComponentsInChildren<AudioSource>()
@@ -220,6 +341,16 @@ namespace CleanToContinue.Tests.PlayMode
             {
                 MemoryOpenCount++;
             }
+        }
+
+        private sealed class InputAudioFixture
+        {
+            public InputAudioFixture(CleaningAudioController audio)
+            {
+                Audio = audio;
+            }
+
+            public CleaningAudioController Audio { get; }
         }
 
         private sealed class MutableProgressSource : IProgressSource

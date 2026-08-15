@@ -442,3 +442,25 @@
 - 실제 오디오 소스, 버튼 콜백, 진행 Text와 휠을 사용하는 새 PlayMode 회귀 테스트 3개를 추가했다.
 - Game View 포커스 상태에서 열린 Unity Editor 전체 PlayMode 17개와 EditMode 21개가 통과했고 실패·건너뜀은 0개였다.
 - Game View가 포커스를 잃은 실행에서는 기존 가상 키보드 테스트 3개가 장치 이벤트 0건으로 실패했으며, 코드 변경 없이 Game View 포커스 후 전부 통과해 환경 조건으로 분리했다.
+
+## 2026-08-16 — 누른 채 UI 진입 시 도구 루프 정지
+
+**문제와 원인**
+
+- 게임 영역에서 좌클릭을 시작하면 오디오가 정상 재생됐지만, 버튼을 놓지 않은 채 UI 위로 이동해도 `CleanHeldChanged`는 상태가 계속 `true`라 새 이벤트를 보내지 않았다.
+- 그 결과 실제 청소 입력의 시작점 규칙은 유지되는 동안 도구 루프만 UI 위에서 계속 들렸다.
+
+**수정**
+
+- `StageInputController`가 좌클릭 상태와 UI 위 여부의 조합이 바뀔 때만 `CleanContextChanged`를 보낸다.
+- `StageController`는 원시 held 변경 대신 이 컨텍스트를 구독하고 누름 시작점이 UI였는지 기억한다. 게임 영역에서 시작한 유효 누름은 UI 진입 시 멈췄다가 이탈 시 재개되지만, UI에서 시작한 누름은 밖으로 나가도 release 전까지 무음이다.
+- `StageInteractionController`의 청소·회전 시작점 차단 로직은 수정하지 않았다.
+
+**TDD와 검증**
+
+- 실제 가상 Mouse, `InputSystemUIInputModule`, 화면 오른쪽 UI 이미지와 실제 오디오 소스를 사용하는 통합 PlayMode 테스트를 먼저 추가했다.
+- RED 1: 게임 영역 누름 뒤 UI로 이동했을 때 audible loop 기대값 0, 실제값 1로 재현됐다.
+- RED 2: 컨텍스트 이벤트만 연결한 첫 수정은 UI에서 시작한 누름이 밖으로 나갈 때 기대값 0, 실제값 1로 잘못 재개됐다.
+- GREEN: 시작점 기억을 더해 유효 누름은 UI 진입 0개·이탈 후 1개, UI 시작 누름은 이탈 후에도 0개로 통과했다.
+- 열린 Unity Editor 전체 EditMode 21개와 Game View 포커스 상태의 PlayMode 18개가 통과했으며 실패·건너뜀은 0개였다.
+- 최종 PlayMode 콘솔은 오류·경고 0개였다. EditMode의 기존 `RuntimeMaskPainterTests`가 활성 RenderTexture를 해제한다는 경고 1건과 Unity AI 계정 경고는 이번 입력·오디오 수정과 분리했다.
