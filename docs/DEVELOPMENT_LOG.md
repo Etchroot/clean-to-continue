@@ -32,3 +32,46 @@
 
 - Unity 6.3 LTS 프로젝트 생성과 공식 MCP 연결
 - 임시 모델을 사용한 마우스 세로 슬라이스 구현
+
+## 2026-08-15 — Unity 개발 환경과 Universal 3D 프로젝트 구축
+
+**사용자 작업**
+
+- Unity Hub 업데이트 충돌을 확인하고 구버전 Hub 3.4.1의 공식 제거를 승인했다.
+- Unity 6.3 LTS, Web Build Support와 함께 설치된 Visual Studio Community 2026을 확인했다.
+
+**Codex 작업**
+
+- Unity Hub 3.20.1과 Unity 6000.3.22f1 설치를 파일과 버전 정보로 검증했다.
+- WebGL 지원 모듈과 Unity Personal 라이선스 활성화를 검증했다.
+- Unity 공식 `3D URP` 템플릿으로 `Game/` 프로젝트를 만들고 WebGL 대상으로 초기화했다.
+- 템플릿의 Input System 1.12.0이 Unity 6.3에서 컴파일되지 않는 문제를 재현하고 공식 지원 버전 1.17.0으로 변경했다.
+
+**검증 결과**
+
+- Unity 6000.3.22f1, URP 17.3.0, Input System 1.17.0이 해석됐다.
+- 두 번째 배치 초기화에서 C# 컴파일 오류 0건, 종료 코드 0을 확인했다.
+- `Assets/Settings/`에 PC·모바일 URP 설정과 기본 볼륨 프로필이 생성됐다.
+
+**다음 작업**
+
+- Unity 공식 MCP 패키지 설치와 Codex 연결 승인
+- Unity 콘솔, 열린 Scene과 GameObject 읽기 테스트
+
+## 2026-08-15 — Unity 공식 MCP Bridge 설치
+
+**Codex 작업**
+
+- `com.unity.ai.assistant` 2.17.0-pre.1을 프로젝트 패키지에 추가했다.
+- 패키지 설치 후 C# 컴파일 오류 0건과 배치 종료 코드 0을 확인했다.
+- Windows Relay 1.3.14가 `C:\Users\차명근\.unity\relay\relay_win.exe`에 생성된 것을 확인했다.
+- Codex 설정에 `unity_mcp` 서버와 `Game` 프로젝트 경로를 추가했다.
+
+**사용자 검증**
+
+- Unity의 `Project Settings > AI > Unity MCP Server`에서 Unity Bridge가 초록색 `Running` 상태임을 직접 확인했다.
+
+**남은 검증**
+
+- Codex 재시작 후 Unity의 `Pending Connections`에서 최초 연결 허용
+- Codex에서 Unity 콘솔, 열린 Scene과 GameObject 정보 읽기

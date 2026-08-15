@@ -12,7 +12,9 @@
 | HIL-006 | 2026-08-15 | 사용 경험이 있는 Unity로 만들기로 했다. | 웹 빌드 위험과 다른 엔진을 비교해 Unity를 권장했다. | Unity 6 기반 Web 게임으로 개발한다. | 기획 | `docs/DEVELOPMENT_ROADMAP.md` |
 | HIL-007 | 2026-08-15 | 형식적인 가제 대신 짧고 게임다운 이름이 필요하다. | `Clean to Continue` 등 세 후보를 제안했다. | 공식 제목은 `Clean to Continue`다. | 검증 | `README.md` |
 | HIL-008 | 2026-08-15 | Codex로 게임 코드 전체를 개발하고 Unity와 최대한 연동한다. | Unity 공식 MCP를 통한 실시간 에디터 연결을 제안했다. | Codex가 주 개발자가 되고 무료 MCP 중심으로 Unity와 연결한다. | 진행 중 | `docs/CODEX_UNITY_WORKFLOW.md` |
-| HIL-009 | 2026-08-15 | GitHub `Etchroot` 계정에 공개 저장소를 만든다. | 에셋 원본 제외와 MIT License를 제안했다. | `clean-to-continue` Public 저장소, MIT License를 사용한다. | 진행 중 | `LICENSE`, `submission/ASSET_CREDITS.md` |
+| HIL-009 | 2026-08-15 | GitHub `Etchroot` 계정에 공개 저장소를 만든다. | 에셋 원본 제외와 MIT License를 제안했다. | `clean-to-continue` Public 저장소, MIT License를 사용한다. | 검증 | `LICENSE`, `submission/ASSET_CREDITS.md` |
+| HIL-010 | 2026-08-15 | 최신 Unity 6.5 대신 어떤 Editor를 설치할지 확인했다. | Web 빌드와 MCP 안정성을 위해 Unity 6.3 LTS 최신 패치를 권장했다. | Unity 6000.3.22f1과 Web Build Support를 사용한다. | 검증 | `Game/ProjectSettings/ProjectVersion.txt`, `docs/DEVELOPMENT_LOG.md` |
+| HIL-011 | 2026-08-15 | Unity 설치와 MCP 설정 과정에서 화면의 설치·제거·Bridge 상태를 직접 확인했다. | Codex가 파일·프로세스·컴파일 로그를 검증하고 사용자 확인이 필요한 UI 단계를 안내했다. | 사용자는 Unity Bridge의 초록색 `Running` 상태를 확인했고 최초 Codex 연결 승인은 재시작 후 진행한다. | 진행 중 | `docs/DEVELOPMENT_LOG.md`, `docs/CODEX_UNITY_WORKFLOW.md` |
 
 ## 새 항목 작성 규칙
 
