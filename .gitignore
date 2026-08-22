@@ -14,6 +14,10 @@ Game/Assets/ThirdParty/*
 !Game/Assets/ThirdParty/README.md
 Game/Assets/AssetStoreTools*
 
+# Runtime copies derived from licensed Asset Store meshes/materials are regenerated locally.
+Game/Assets/CleanToContinue/Meshes/Generated/
+Game/Assets/CleanToContinue/Materials/Generated/
+
 # Unity generated IDE files
 Game/*.csproj
 Game/*.sln

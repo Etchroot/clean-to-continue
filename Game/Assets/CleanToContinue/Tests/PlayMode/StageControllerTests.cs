@@ -132,6 +132,36 @@ namespace CleanToContinue.Tests.PlayMode
             Assert.That(stage.ProgressWheel.DisplayedProgress01, Is.GreaterThanOrEqualTo(0.9f));
         }
 
+        [Test]
+        public void MemoryPanelStoresSeparateNextAndMenuActions()
+        {
+            var viewObject = new GameObject("Memory View Test");
+            var panelObject = new GameObject("Memory Root Test");
+            var nextObject = new GameObject("Next Button Test", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+            var menuObject = new GameObject("Menu Button Test", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+            createdObjects.Add(viewObject);
+            createdObjects.Add(panelObject);
+            createdObjects.Add(nextObject);
+            createdObjects.Add(menuObject);
+
+            var nextButton = nextObject.GetComponent<Button>();
+            var menuButton = menuObject.GetComponent<Button>();
+            var view = viewObject.AddComponent<MemoryPanelView>();
+            view.Configure(
+                panelObject,
+                null,
+                null,
+                null,
+                nextButton,
+                menuButton,
+                "04.Keyboard",
+                null,
+                "기억 문장");
+
+            Assert.That(view.NextSceneName, Is.EqualTo("04.Keyboard"));
+            Assert.That(view.MainMenuSceneName, Is.EqualTo("01.MainMenu"));
+        }
+
         [UnityTearDown]
         public IEnumerator TearDown()
         {

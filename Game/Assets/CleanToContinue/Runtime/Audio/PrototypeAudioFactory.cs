@@ -11,7 +11,6 @@ namespace CleanToContinue.Audio
         public sealed class ClipSet
         {
             public AudioClip AirGun;
-            public AudioClip CottonSwab;
             public AudioClip Cloth;
             public AudioClip Completion;
         }
@@ -21,10 +20,50 @@ namespace CleanToContinue.Audio
             return new ClipSet
             {
                 AirGun = CreateNoiseLoop("Prototype Air Gun", seed, NoiseKind.FilteredAir),
-                CottonSwab = CreateNoiseLoop("Prototype Cotton Swab", seed + 1, NoiseKind.HighFriction),
-                Cloth = CreateNoiseLoop("Prototype Cloth", seed + 2, NoiseKind.LowFriction),
+                Cloth = CreateClothSqueakLoop(seed + 1),
                 Completion = CreateCompletionChime()
             };
+        }
+
+        private static AudioClip CreateClothSqueakLoop(int seed)
+        {
+            var samples = new float[SampleRate];
+            var random = new System.Random(seed);
+            var lowPass = 0f;
+            var burstStarts = new[] { 0.08f, 0.31f, 0.54f, 0.77f };
+            const float burstDuration = 0.085f;
+
+            for (var i = 0; i < samples.Length; i++)
+            {
+                var time = (float)i / SampleRate;
+                var noise = (float)(random.NextDouble() * 2d - 1d);
+                lowPass += (noise - lowPass) * 0.025f;
+                var value = lowPass * 0.018f;
+
+                for (var burst = 0; burst < burstStarts.Length; burst++)
+                {
+                    var localTime = time - burstStarts[burst];
+                    if (localTime < 0f || localTime >= burstDuration)
+                    {
+                        continue;
+                    }
+
+                    var normalized = localTime / burstDuration;
+                    var envelope = Mathf.Sin(Mathf.PI * normalized);
+                    envelope *= envelope;
+                    var startFrequency = burst % 2 == 0 ? 1250f : 1050f;
+                    var endFrequency = burst % 2 == 0 ? 720f : 1550f;
+                    var sweepRate = (endFrequency - startFrequency) / burstDuration;
+                    var phase = Mathf.PI * 2f *
+                        (startFrequency * localTime + 0.5f * sweepRate * localTime * localTime);
+                    var squeak = Mathf.Sin(phase) + Mathf.Sin(phase * 2.01f) * 0.18f;
+                    value += squeak * envelope * 0.19f;
+                }
+
+                samples[i] = Mathf.Clamp(value, -0.24f, 0.24f);
+            }
+
+            return CreateClip("Prototype Cloth Squeak", samples);
         }
 
         private static AudioClip CreateNoiseLoop(string name, int seed, NoiseKind kind)
@@ -59,16 +98,30 @@ namespace CleanToContinue.Audio
         {
             var sampleCount = Mathf.RoundToInt(SampleRate * 0.7f);
             var samples = new float[sampleCount];
+            var starts = new[] { 0f, 0.18f, 0.38f };
+            var frequencies = new[] { 987.77f, 1318.51f, 1760f };
             for (var i = 0; i < sampleCount; i++)
             {
                 var time = (float)i / SampleRate;
-                var frequency = time < 0.28f ? 523.25f : 659.25f;
-                var noteTime = time < 0.28f ? time : time - 0.28f;
-                var envelope = Mathf.Exp(-4.5f * noteTime) * Mathf.Clamp01(time * 45f);
-                samples[i] = Mathf.Sin(2f * Mathf.PI * frequency * time) * envelope * 0.28f;
+                var sample = 0f;
+                for (var note = 0; note < starts.Length; note++)
+                {
+                    var noteTime = time - starts[note];
+                    if (noteTime < 0f)
+                    {
+                        continue;
+                    }
+
+                    var attack = Mathf.Clamp01(noteTime * 90f);
+                    var envelope = attack * Mathf.Exp(-7.5f * noteTime);
+                    var phase = 2f * Mathf.PI * frequencies[note] * noteTime;
+                    sample += (Mathf.Sin(phase) + Mathf.Sin(phase * 2f) * 0.18f) * envelope * 0.22f;
+                }
+
+                samples[i] = Mathf.Clamp(sample, -0.8f, 0.8f);
             }
 
-            return CreateClip("Prototype Completion", samples);
+            return CreateClip("Prototype Three Note Bell", samples);
         }
 
         private static AudioClip CreateClip(string name, float[] samples)

@@ -51,8 +51,8 @@ namespace CleanToContinue.Tests.PlayMode
             var selections = new List<CleaningTool>();
             fixture.Input.NumericToolSelected += selections.Add;
 
-            yield return PressAndRelease(keyboard, Key.Digit2);
             yield return PressAndRelease(keyboard, Key.Digit3);
+            yield return PressAndRelease(keyboard, Key.Digit2);
             yield return PressAndRelease(keyboard, Key.Digit1);
 
             Assert.That(fixture.Selection.Selected, Is.EqualTo(CleaningTool.AirGun));
@@ -60,7 +60,6 @@ namespace CleanToContinue.Tests.PlayMode
                 selections,
                 Is.EqualTo(new[]
                 {
-                    CleaningTool.CottonSwab,
                     CleaningTool.Cloth,
                     CleaningTool.AirGun
                 }));

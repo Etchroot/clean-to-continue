@@ -57,6 +57,71 @@ namespace CleanToContinue.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator CottonSwabFindsGapDirtBehindSurfaceCollider()
+        {
+            var fixture = CreateBaseFixture();
+            var surface = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            surface.name = "Cleanable Surface In Front";
+            surface.layer = 8;
+            surface.transform.position = Vector3.zero;
+            createdObjects.Add(surface);
+            CreateGapDirt(fixture, new Vector3(0f, 0f, 0.65f));
+            fixture.Interaction.Configure(
+                fixture.Camera,
+                fixture.Selection,
+                fixture.Rotator,
+                new SurfaceMaskLayer[0],
+                fixture.Gap,
+                0.1f,
+                0.5f);
+            fixture.Selection.Select(CleaningTool.CottonSwab);
+            Physics.SyncTransforms();
+
+            fixture.Interaction.ProcessFrame(fixture.CenterPointer, Vector2.zero, true, false, false);
+            yield return null;
+
+            Assert.That(fixture.Gap.Progress01, Is.GreaterThan(0f));
+        }
+
+        [UnityTest]
+        public IEnumerator ExactChildSurfaceWinsOverParentSurface()
+        {
+            var fixture = CreateBaseFixture();
+            var parent = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            parent.name = "Parent Cleanable Surface";
+            parent.layer = 8;
+            parent.transform.position = new Vector3(5f, 0f, 0f);
+            createdObjects.Add(parent);
+
+            var child = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            child.name = "Child Cleanable Surface";
+            child.layer = 8;
+            child.transform.position = Vector3.zero;
+            child.transform.SetParent(parent.transform, true);
+
+            var parentDust = parent.AddComponent<SurfaceMaskLayer>();
+            parentDust.Configure(parent.GetComponent<Renderer>(), CleaningTool.AirGun, "_DustMask", 16, 32);
+            var childDust = child.AddComponent<SurfaceMaskLayer>();
+            childDust.Configure(child.GetComponent<Renderer>(), CleaningTool.AirGun, "_DustMask", 16, 32);
+            fixture.Interaction.Configure(
+                fixture.Camera,
+                fixture.Selection,
+                fixture.Rotator,
+                new[] { parentDust, childDust },
+                fixture.Gap,
+                0.1f,
+                0.5f);
+            fixture.Selection.Select(CleaningTool.AirGun);
+            Physics.SyncTransforms();
+
+            fixture.Interaction.ProcessFrame(fixture.CenterPointer, Vector2.zero, true, false, false);
+            yield return null;
+
+            Assert.That(childDust.Progress01, Is.GreaterThan(0f));
+            Assert.That(parentDust.Progress01, Is.EqualTo(0f));
+        }
+
+        [UnityTest]
         public IEnumerator RightDragRotatesWithoutCleaning()
         {
             var fixture = CreateSurfaceFixture();

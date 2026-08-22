@@ -103,9 +103,7 @@ namespace CleanToContinue.UI
 
                 if (binding.AccessibleLabel != null)
                 {
-                    binding.AccessibleLabel.text = selected
-                        ? $"{GetToolLabel(binding.Tool)} (선택됨)"
-                        : GetToolLabel(binding.Tool);
+                    binding.AccessibleLabel.text = GetToolLabel(binding.Tool);
                 }
             }
         }
@@ -168,14 +166,24 @@ namespace CleanToContinue.UI
             selectionModel?.Select(tool);
         }
 
-        private void RenderAllProgress()
+        public void RenderAllProgress()
         {
+            var totals = new Dictionary<CleaningTool, float>();
+            var counts = new Dictionary<CleaningTool, int>();
             foreach (var source in progressSources)
             {
                 if (source != null)
                 {
-                    RenderProgress(source.Tool, source.Progress01);
+                    totals.TryGetValue(source.Tool, out var total);
+                    counts.TryGetValue(source.Tool, out var count);
+                    totals[source.Tool] = total + Mathf.Clamp01(source.Progress01);
+                    counts[source.Tool] = count + 1;
                 }
+            }
+
+            foreach (var pair in totals)
+            {
+                RenderProgress(pair.Key, pair.Value / counts[pair.Key]);
             }
         }
 
@@ -210,11 +218,11 @@ namespace CleanToContinue.UI
             switch (tool)
             {
                 case CleaningTool.AirGun:
-                    return "에어건";
+                    return "에어건 (먼지 제거)";
                 case CleaningTool.CottonSwab:
                     return "면봉";
                 case CleaningTool.Cloth:
-                    return "헝겊";
+                    return "헝겊 (광택 내기)";
                 default:
                     return tool.ToString();
             }

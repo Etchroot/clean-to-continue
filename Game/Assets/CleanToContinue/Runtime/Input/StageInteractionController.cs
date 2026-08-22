@@ -2,6 +2,7 @@ using CleanToContinue.Core;
 using CleanToContinue.Gap;
 using CleanToContinue.Highlight;
 using CleanToContinue.Surface;
+using System;
 using UnityEngine;
 
 namespace CleanToContinue.Input
@@ -115,30 +116,61 @@ namespace CleanToContinue.Input
 
             var ray = stageCamera.ScreenPointToRay(pointerPosition);
             var cleanableMask = 1 << CleanableLayer;
-            if (!Physics.Raycast(ray, out var hit, Mathf.Infinity, cleanableMask))
+            var hits = Physics.RaycastAll(ray, Mathf.Infinity, cleanableMask);
+            if (hits.Length == 0)
             {
                 return;
             }
+
+            Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
 
             if (toolSelection.Selected == CleaningTool.CottonSwab)
             {
-                gapDirtGroup?.TryClean(
-                    CleaningTool.CottonSwab,
-                    hit.collider,
-                    gapCleaningAmount);
+                foreach (var hit in hits)
+                {
+                    if (gapDirtGroup != null && gapDirtGroup.TryClean(
+                            CleaningTool.CottonSwab,
+                            hit.collider,
+                            gapCleaningAmount))
+                    {
+                        return;
+                    }
+                }
+
                 return;
             }
 
+            foreach (var hit in hits)
+            {
+                if (TryCleanSurfaceHit(hit, true) || TryCleanSurfaceHit(hit, false))
+                {
+                    return;
+                }
+            }
+        }
+
+        private bool TryCleanSurfaceHit(RaycastHit hit, bool exactMatchOnly)
+        {
             foreach (var layer in surfaceLayers)
             {
-                if (layer == null || layer.Tool != toolSelection.Selected || !BelongsToHit(layer.transform, hit.collider.transform))
+                if (layer == null || layer.Tool != toolSelection.Selected)
+                {
+                    continue;
+                }
+
+                var isMatch = exactMatchOnly
+                    ? layer.transform == hit.collider.transform
+                    : BelongsToHit(layer.transform, hit.collider.transform);
+                if (!isMatch)
                 {
                     continue;
                 }
 
                 layer.TryClean(toolSelection.Selected, hit, surfaceBrushRadius);
-                return;
+                return true;
             }
+
+            return false;
         }
 
         private static bool BelongsToHit(Transform layerTransform, Transform hitTransform)

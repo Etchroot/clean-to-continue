@@ -24,7 +24,6 @@ namespace CleanToContinue.Input
         private InputAction rotateAction;
         private InputAction highlightAction;
         private InputAction airGunAction;
-        private InputAction cottonSwabAction;
         private InputAction clothAction;
         private Vector2 previousPointerPosition;
         private bool hasPreviousPointerPosition;
@@ -68,7 +67,6 @@ namespace CleanToContinue.Input
             rotateAction.Enable();
             highlightAction.Enable();
             airGunAction.Enable();
-            cottonSwabAction.Enable();
             clothAction.Enable();
         }
 
@@ -118,12 +116,10 @@ namespace CleanToContinue.Input
             rotateAction = new InputAction("Rotate", InputActionType.Button, "<Mouse>/rightButton");
             highlightAction = new InputAction("Highlight", InputActionType.Button, "<Keyboard>/space");
             airGunAction = new InputAction("AirGun", InputActionType.Button, "<Keyboard>/1");
-            cottonSwabAction = new InputAction("CottonSwab", InputActionType.Button, "<Keyboard>/2");
-            clothAction = new InputAction("Cloth", InputActionType.Button, "<Keyboard>/3");
+            clothAction = new InputAction("Cloth", InputActionType.Button, "<Keyboard>/2");
 
             highlightAction.performed += _ => PerformHighlight();
             airGunAction.performed += _ => SelectTool(CleaningTool.AirGun);
-            cottonSwabAction.performed += _ => SelectTool(CleaningTool.CottonSwab);
             clothAction.performed += _ => SelectTool(CleaningTool.Cloth);
         }
 
@@ -191,7 +187,6 @@ namespace CleanToContinue.Input
             DisposeAction(ref rotateAction);
             DisposeAction(ref highlightAction);
             DisposeAction(ref airGunAction);
-            DisposeAction(ref cottonSwabAction);
             DisposeAction(ref clothAction);
         }
 

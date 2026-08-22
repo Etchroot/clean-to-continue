@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6424808714849921696
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1018409133451995317}
+  - component: {fileID: 2187670547908042756}
+  - component: {fileID: 6626442854913490848}
+  - component: {fileID: 8394206223921712157}
+  - component: {fileID: 7057049028928469265}
+  - component: {fileID: 3891294763564797889}
+  - component: {fileID: 2583680995663860569}
+  m_Layer: 0
+  m_Name: StageRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1018409133451995317
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424808714849921696}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2187670547908042756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424808714849921696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 161be31dad438524092efe8d018e4671, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: CleanToContinue.Runtime::CleanToContinue.Stage.StageController
+  surfaceLayers: []
+  gapDirtGroup: {fileID: 0}
+  inputController: {fileID: 0}
+  interactionController: {fileID: 0}
+  equipmentRotator: {fileID: 0}
+  progressWheel: {fileID: 0}
+  toolSelector: {fileID: 0}
+  memoryPanel: {fileID: 0}
+  cleaningAudio: {fileID: 0}
+  minimumPitch: -35
+  maximumPitch: 55
+--- !u!114 &6626442854913490848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424808714849921696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0731bc43179a941448a07a8fb18dfb29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: CleanToContinue.Runtime::CleanToContinue.Input.StageInputController
+  interactionController: {fileID: 0}
+  highlightController: {fileID: 0}
+  continuousToolAudio: {fileID: 0}
+--- !u!114 &8394206223921712157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424808714849921696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6b435bab9fd814589dcd6b8ac58a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: CleanToContinue.Runtime::CleanToContinue.Input.StageInteractionController
+  stageCamera: {fileID: 0}
+  equipmentRotator: {fileID: 0}
+  surfaceLayers: []
+  gapDirtGroup: {fileID: 0}
+  highlightController: {fileID: 0}
+  surfaceBrushRadius: 0.1
+  gapCleaningAmount: 0.5
+--- !u!114 &7057049028928469265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424808714849921696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 746978757e398d8498494b172ae8b8e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: CleanToContinue.Runtime::CleanToContinue.Highlight.HighlightController
+  surfaceLayers: []
+  gapSpots: []
+--- !u!114 &3891294763564797889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424808714849921696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6daa9c22e77c64046a6e3dbb9e28ac03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: CleanToContinue.Runtime::CleanToContinue.Audio.CleaningAudioController
+  airGunSource: {fileID: 0}
+  clothSource: {fileID: 0}
+  completionSource: {fileID: 0}
+  crossFadeSeconds: 0.08
+--- !u!114 &2583680995663860569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424808714849921696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dce8319b7d2472090f3d272c9b0a2a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: CleanToContinue.Runtime::CleanToContinue.Flow.EquipmentStageBootstrap
+  stageController: {fileID: 0}
+  inputController: {fileID: 0}
+  interactionController: {fileID: 0}
+  equipmentRotator: {fileID: 0}
+  highlightController: {fileID: 0}
+  audioController: {fileID: 0}
+  stageCamera: {fileID: 0}
+  surfaceLayers: []
+  progressWheel: {fileID: 0}
+  progressFill: {fileID: 0}
+  progressText: {fileID: 0}
+  toolSelector: {fileID: 0}
+  toolButtons: []
+  cleaningCursor: {fileID: 0}
+  memoryPanel: {fileID: 0}
+  memoryPanelRoot: {fileID: 0}
+  memoryDimmer: {fileID: 0}
+  memoryImage: {fileID: 0}
+  memoryLine: {fileID: 0}
+  nextStageButton: {fileID: 0}
+  mainMenuButton: {fileID: 0}
+  memoryText: 
+  nextSceneName: 

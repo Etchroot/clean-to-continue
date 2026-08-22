@@ -18,10 +18,11 @@ namespace CleanToContinue.Surface
         private MaterialPropertyBlock propertyBlock;
         private RuntimeMaskPainter painter;
         private CoverageGrid coverage;
+        private TriangleSurfaceCleaner triangleCleaner;
         private int maskPropertyId;
 
         public CleaningTool Tool => tool;
-        public float Progress01 => coverage?.Progress01 ?? 0f;
+        public float Progress01 => triangleCleaner?.Progress01 ?? coverage?.Progress01 ?? 0f;
         public RenderTexture CurrentMask => painter?.CurrentMask;
 
         public event Action ProgressChanged;
@@ -53,26 +54,53 @@ namespace CleanToContinue.Surface
 
         public bool TryClean(CleaningTool selectedTool, RaycastHit hit, float normalizedRadius)
         {
-            if (selectedTool != tool || painter == null || coverage == null)
+            if (selectedTool != tool)
+            {
+                return false;
+            }
+
+            if (triangleCleaner != null)
+            {
+                var newlyCleanedTriangles = triangleCleaner.Clean(hit.point, normalizedRadius);
+                if (newlyCleanedTriangles > 0)
+                {
+                    ProgressChanged?.Invoke();
+                }
+
+                return true;
+            }
+
+            if (painter == null || coverage == null)
             {
                 return false;
             }
 
             var newlyCleaned = coverage.ApplyDisc(hit.textureCoord, normalizedRadius);
-            if (newlyCleaned == 0)
-            {
-                return false;
-            }
-
             painter.Stamp(hit.textureCoord, normalizedRadius, 0f);
             ApplyMaskToRenderer();
-            ProgressChanged?.Invoke();
+            if (newlyCleaned > 0)
+            {
+                ProgressChanged?.Invoke();
+            }
+
             return true;
         }
 
         public void ForceFinish()
         {
-            if (painter == null || coverage == null || Progress01 >= 1f)
+            if (Progress01 >= 1f)
+            {
+                return;
+            }
+
+            if (triangleCleaner != null)
+            {
+                triangleCleaner.ForceFinish();
+                ProgressChanged?.Invoke();
+                return;
+            }
+
+            if (painter == null || coverage == null)
             {
                 return;
             }
@@ -108,16 +136,60 @@ namespace CleanToContinue.Surface
         {
             painter?.Dispose();
             painter = null;
+            triangleCleaner?.Dispose();
+            triangleCleaner = null;
         }
 
         private void InitializeRuntimeState()
         {
             painter?.Dispose();
+            painter = null;
+            triangleCleaner?.Dispose();
+            triangleCleaner = null;
+            coverage = null;
+
+            var meshFilter = targetRenderer.GetComponent<MeshFilter>();
+            var mesh = meshFilter != null ? meshFilter.sharedMesh : null;
+            if (!HasUsableUv(mesh))
+            {
+                triangleCleaner = new TriangleSurfaceCleaner(meshFilter);
+                return;
+            }
+
             painter = new RuntimeMaskPainter();
             painter.Initialize(visualResolution, Color.white);
-            coverage = CoverageGrid.CreateFilled(coverageResolution, coverageResolution);
+            coverage = CoverageGrid.CreateFromUvTriangles(
+                coverageResolution,
+                coverageResolution,
+                mesh.uv,
+                mesh.triangles);
             maskPropertyId = Shader.PropertyToID(maskProperty);
             ApplyMaskToRenderer();
+        }
+
+        private static bool HasUsableUv(Mesh mesh)
+        {
+            if (mesh == null || !mesh.isReadable || mesh.uv == null || mesh.uv.Length != mesh.vertexCount)
+            {
+                return false;
+            }
+
+            var uv = mesh.uv;
+            if (uv.Length == 0)
+            {
+                return false;
+            }
+
+            var first = uv[0];
+            for (var index = 1; index < uv.Length; index++)
+            {
+                if ((uv[index] - first).sqrMagnitude > 0.00000001f)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void ApplyMaskToRenderer()

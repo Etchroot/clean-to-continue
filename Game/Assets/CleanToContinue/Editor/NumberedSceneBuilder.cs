@@ -112,6 +112,38 @@ namespace CleanToContinue.Editor
             EnsureComponent<EventSystem>(eventSystem, out _);
         }
 
+        public static bool TrySetUntouchedGuideVisible(Scene scene, string sceneName, bool visible)
+        {
+            var definition = Definitions.FirstOrDefault(candidate => candidate.Name == sceneName);
+            if (string.IsNullOrEmpty(definition.Name))
+            {
+                return false;
+            }
+
+            var uiRoot = scene.GetRootGameObjects().FirstOrDefault(root => root.name == "UIRoot");
+            var background = uiRoot?.transform.Find("PlaceholderBackground")?.gameObject;
+            var titleObject = uiRoot?.transform.Find("SceneTitle")?.gameObject;
+            var guideObject = uiRoot?.transform.Find("SceneGuide")?.gameObject;
+            var backgroundImage = background != null ? background.GetComponent<Image>() : null;
+            var title = titleObject != null ? titleObject.GetComponent<Text>() : null;
+            var guide = guideObject != null ? guideObject.GetComponent<Text>() : null;
+            if (backgroundImage == null
+                || title == null
+                || guide == null
+                || title.text != definition.Name
+                || guide.text != $"SCENE SKELETON  |  {definition.Guide}"
+                || !Approximately(backgroundImage.color, definition.Background))
+            {
+                return false;
+            }
+
+            Undo.RecordObjects(new UnityEngine.Object[] { background, titleObject, guideObject }, "Toggle CTC scene guide");
+            background.SetActive(visible);
+            titleObject.SetActive(visible);
+            guideObject.SetActive(visible);
+            return true;
+        }
+
         private static GameObject EnsureRoot(Scene scene, string name, out bool created)
         {
             var root = scene.GetRootGameObjects().FirstOrDefault(gameObject => gameObject.name == name);
@@ -287,6 +319,14 @@ namespace CleanToContinue.Editor
             rectTransform.pivot = new Vector2(0.5f, 0.5f);
             rectTransform.offsetMin = Vector2.zero;
             rectTransform.offsetMax = Vector2.zero;
+        }
+
+        private static bool Approximately(Color left, Color right)
+        {
+            return Mathf.Approximately(left.r, right.r)
+                && Mathf.Approximately(left.g, right.g)
+                && Mathf.Approximately(left.b, right.b)
+                && Mathf.Approximately(left.a, right.a);
         }
 
         private static void EnsureFolder(string parent, string child)

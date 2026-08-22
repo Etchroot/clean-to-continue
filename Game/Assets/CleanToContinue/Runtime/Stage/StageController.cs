@@ -15,10 +15,12 @@ namespace CleanToContinue.Stage
     public sealed class StageController : MonoBehaviour
     {
         public const string MasterVolumeKey = "ctc.masterVolume";
+        public const string MusicVolumeKey = "ctc.musicVolume";
         public const string SfxVolumeKey = "ctc.sfxVolume";
         public const string RotationSensitivityKey = "ctc.rotationSensitivity";
 
         public const float DefaultMasterVolume = 0.8f;
+        public const float DefaultMusicVolume = 0.7f;
         public const float DefaultSfxVolume = 1f;
         public const float DefaultRotationSensitivity = 1f;
 
@@ -233,13 +235,7 @@ namespace CleanToContinue.Stage
         private void RenderProgressViews()
         {
             progressWheel?.Render(progressModel.Progress01);
-            foreach (var source in progressSources)
-            {
-                if (source != null)
-                {
-                    toolSelector?.RenderProgress(source.Tool, source.Progress01);
-                }
-            }
+            toolSelector?.RenderAllProgress();
         }
 
         private IEnumerator AnimateWheelToComplete(float start)

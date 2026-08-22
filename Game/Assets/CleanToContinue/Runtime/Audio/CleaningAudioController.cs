@@ -8,7 +8,6 @@ namespace CleanToContinue.Audio
     public sealed class CleaningAudioController : MonoBehaviour, IContinuousToolAudio
     {
         [SerializeField] private AudioSource airGunSource;
-        [SerializeField] private AudioSource cottonSwabSource;
         [SerializeField] private AudioSource clothSource;
         [SerializeField] private AudioSource completionSource;
         [SerializeField, Min(0.01f)] private float crossFadeSeconds = 0.08f;
@@ -36,7 +35,6 @@ namespace CleanToContinue.Audio
             }
 
             EnsureLoopIsPlaying(airGunSource);
-            EnsureLoopIsPlaying(cottonSwabSource);
             EnsureLoopIsPlaying(clothSource);
             fadeRoutine = StartCoroutine(CrossFadeTo(selectedTool));
         }
@@ -50,7 +48,6 @@ namespace CleanToContinue.Audio
             }
 
             StopSource(airGunSource);
-            StopSource(cottonSwabSource);
             StopSource(clothSource);
         }
 
@@ -77,7 +74,6 @@ namespace CleanToContinue.Audio
         private void OnDestroy()
         {
             DestroyClip(clips?.AirGun);
-            DestroyClip(clips?.CottonSwab);
             DestroyClip(clips?.Cloth);
             DestroyClip(clips?.Completion);
         }
@@ -92,7 +88,6 @@ namespace CleanToContinue.Audio
             EnsureSources();
             clips = PrototypeAudioFactory.Create();
             ConfigureLoop(airGunSource, clips.AirGun);
-            ConfigureLoop(cottonSwabSource, clips.CottonSwab);
             ConfigureLoop(clothSource, clips.Cloth);
             completionSource.playOnAwake = false;
             completionSource.loop = false;
@@ -101,7 +96,6 @@ namespace CleanToContinue.Audio
         private void EnsureSources()
         {
             airGunSource = airGunSource != null ? airGunSource : CreateSource("Air Gun Loop");
-            cottonSwabSource = cottonSwabSource != null ? cottonSwabSource : CreateSource("Cotton Swab Loop");
             clothSource = clothSource != null ? clothSource : CreateSource("Cloth Loop");
             completionSource = completionSource != null ? completionSource : CreateSource("Completion One Shot");
         }
@@ -133,20 +127,17 @@ namespace CleanToContinue.Audio
         {
             var elapsed = 0f;
             var airStart = airGunSource.volume;
-            var cottonStart = cottonSwabSource.volume;
             var clothStart = clothSource.volume;
             while (elapsed < crossFadeSeconds)
             {
                 elapsed += Time.unscaledDeltaTime;
                 var t = Mathf.Clamp01(elapsed / crossFadeSeconds);
                 airGunSource.volume = Mathf.Lerp(airStart, selectedTool == CleaningTool.AirGun ? sfxVolume : 0f, t);
-                cottonSwabSource.volume = Mathf.Lerp(cottonStart, selectedTool == CleaningTool.CottonSwab ? sfxVolume : 0f, t);
                 clothSource.volume = Mathf.Lerp(clothStart, selectedTool == CleaningTool.Cloth ? sfxVolume : 0f, t);
                 yield return null;
             }
 
             airGunSource.volume = selectedTool == CleaningTool.AirGun ? sfxVolume : 0f;
-            cottonSwabSource.volume = selectedTool == CleaningTool.CottonSwab ? sfxVolume : 0f;
             clothSource.volume = selectedTool == CleaningTool.Cloth ? sfxVolume : 0f;
             fadeRoutine = null;
         }

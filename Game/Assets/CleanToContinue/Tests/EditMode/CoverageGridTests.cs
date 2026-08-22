@@ -27,5 +27,21 @@ namespace CleanToContinue.Tests.EditMode
                 grid.ApplyDisc(new Vector2(-1f, 2f), 0.15f));
             Assert.That(grid.Progress01, Is.GreaterThan(0f));
         }
+
+        [Test]
+        public void MeshUvCoverageIgnoresEmptyAtlasSpace()
+        {
+            var uv = new[]
+            {
+                new Vector2(0f, 0f),
+                new Vector2(0.25f, 0f),
+                new Vector2(0f, 0.25f)
+            };
+            var grid = CoverageGrid.CreateFromUvTriangles(16, 16, uv, new[] { 0, 1, 2 });
+
+            grid.ApplyDisc(new Vector2(0.1f, 0.1f), 0.25f);
+
+            Assert.That(grid.Progress01, Is.EqualTo(1f));
+        }
     }
 }
