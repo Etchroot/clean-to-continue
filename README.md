@@ -15,16 +15,33 @@
 
 ## 프로젝트 구조
 
-- `Game/`: Unity 프로젝트
-- `docs/GAME_DESIGN.md`: 게임 규칙과 연출
-- `docs/DEVELOPMENT_ROADMAP.md`: 구현 순서와 완료 기준
-- `docs/CODEX_UNITY_WORKFLOW.md`: Codex와 Unity의 연동 방식
-- `docs/NONTECHNICAL_GUIDE.md`: 비전공자를 위한 구조 설명
-- `docs/ASSET_REQUIREMENTS.md`: 구매·준비할 에셋과 기술 조건
-- `docs/HUMAN_IN_THE_LOOP.md`: 사용자의 직접 결정 기록
-- `docs/DEVELOPMENT_LOG.md`: 날짜별 개발 기록
-- `docs/NOTION_DEVELOPMENT_SUMMARY.md`: Notion 게시용 전체 개발 요약과 후기
-- `submission/`: 신청서, 영상, Codex 활용과 검수 자료
+```text
+openaigamebuilders/
+├─ Game/                              # Unity 프로젝트
+│  ├─ Assets/
+│  │  ├─ CleanToContinue/
+│  │  │  ├─ Editor/                  # 씬 생성·테스트·WebGL 빌드 도구
+│  │  │  ├─ Runtime/
+│  │  │  │  ├─ Audio/               # 배경음·청소음·효과음
+│  │  │  │  ├─ Flow/                # 오프닝과 씬 전환
+│  │  │  │  ├─ Input/               # 청소·회전 입력
+│  │  │  │  ├─ Stage/               # 진행도와 완료 처리
+│  │  │  │  ├─ Surface/             # UV·폴리곤 청소 시스템
+│  │  │  │  └─ UI/                  # 메뉴·도구·추억 UI
+│  │  │  ├─ Scenes/                  # 여섯 개의 게임 씬
+│  │  │  ├─ Shaders/                 # 먼지·광택 마스크
+│  │  │  └─ Tests/                   # EditMode·PlayMode 테스트
+│  │  └─ ThirdParty/                 # 외부 에셋, Git 공개 제외
+│  ├─ Packages/                      # Unity 패키지 설정
+│  └─ ProjectSettings/               # Unity 프로젝트 설정
+├─ docs/                              # 기획·개발·HIL 기록
+├─ submission/                        # 해커톤 제출 자료
+├─ AGENTS.md                          # Codex 작업 지침
+├─ README.md
+└─ LICENSE
+```
+
+세부 게임 구조는 `docs/NONTECHNICAL_GUIDE.md`, 기획과 구현 과정은 `docs/GAME_DESIGN.md`와 `docs/DEVELOPMENT_LOG.md`에서 확인할 수 있습니다.
 
 ## Unity 프로젝트 열기
 
