@@ -689,3 +689,9 @@
 - 처음 PlayMode 실행은 Game View가 포커스되지 않아 실제 입력 이벤트를 쓰는 기존 네 테스트가 실패했다. 같은 코드에서 Game View만 포커스한 재실행은 63개 전부 통과했고 실패·건너뜀은 0개였다.
 - 프로젝트의 `WebBuildCommand.BuildWebRelease()`를 직접 실행해 예외 없이 완료했고, `Game/Builds/WebGL`에서 루트 `index.html`, `Build`, `StreamingAssets`, `TemplateData`를 포함한 18개 파일과 약 68.6MB 구성을 확인했다.
 - Unity 빌드 직후 콘솔 오류는 0건이었다.
+
+**GitHub 반영**
+
+- 공개 후보 130개 파일을 검사해 ThirdParty 원본, Web 빌드, Unity 캐시와 Asset Store 파생 생성 메시·머티리얼이 포함되지 않은 것을 확인했다.
+- 인트로 MP4는 Git LFS 포인터로 커밋했으며, 한글 폰트는 OFL 원문과 함께 포함했다. 비밀값 검사에서 실제 인증 정보는 발견되지 않았다.
+- 기능 브랜치의 최종 구현·문서 커밋 `054715f`를 `main`에 fast-forward 통합하고 `origin/main`에 푸시했다. Git LFS 객체 1개 4.1MB 전송도 완료됐다.
